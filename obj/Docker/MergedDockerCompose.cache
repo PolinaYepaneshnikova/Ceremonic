@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: D:\Visual Studio Projects\Ceremonic
+      dockerfile: CeremonicBackend/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: ceremonicbackend
+    ports:
+    - published: 5000
+      target: 80
+  client:
+    build:
+      context: D:\Visual Studio Projects\Ceremonic\ceremonic-client
+      dockerfile: Dockerfile
+    image: client
+    ports:
+    - published: 5001
+      target: 3000
+  proxy:
+    image: nginx:mainline
+    ports:
+    - published: 80
+      target: 80
+    volumes:
+    - D:\Visual Studio Projects\Ceremonic\nginx.conf:/etc/nginx/nginx.conf:rw
+version: '3.4'
