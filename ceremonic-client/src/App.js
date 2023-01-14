@@ -1,25 +1,40 @@
 import logo from './logo.svg';
 import './App.css';
+import { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const address = 'http://localhost:5000';
+// const address = '';
+
+class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      users: [],
+    };
+  }
+
+  getUsers = async () => {
+    fetch(address + '/api/users')
+    .then(async response => {
+      const users = await response.json();
+
+      this.setState({
+        users: users,
+      });
+    });
+  }
+
+  render() {
+    const usersLi = this.state.users.map((item, index) => <li key={index}>{item.name}</li>);
+
+    return (
+      <div className='App'>
+        <button onClick={this.getUsers}>Загрузить список пользователей</button>
+        <ul>{usersLi}</ul>
+      </div>
+    );
+  }
 }
 
 export default App;
