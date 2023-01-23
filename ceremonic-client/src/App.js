@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
 
-const address = 'http://localhost:5000';
+const address = 'https://ceremonicapi.azurewebsites.net';
 // const address = '';
 
 class App extends Component {
