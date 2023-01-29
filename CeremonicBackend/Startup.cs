@@ -43,48 +43,48 @@ namespace CeremonicBackend
                 .GetRequiredService<ICeremonicMongoDbContext>()
                 .CreateIndexes();
 
-            services.BuildServiceProvider()
-                .GetRequiredService<ICeremonicMongoDbContext>()
-                .Weddings.InsertOne(new WeddingEntity()
-                {
-                    UserId = 1,
-                    Wife = new PersonEntity()
-                    {
-                        Id = Guid.NewGuid(),
-                        FullName = "Ганна Павлюк",
-                        AvatarFileName = null,
-                        Email = "hanna.pavliuk@nure.ua",
-                        PlusGuests = 0,
-                        CategoryId = 0,
-                        WillCome = true,
-                    },
-                    Husband = new PersonEntity()
-                    {
-                        Id = Guid.NewGuid(),
-                        FullName = "Павло Перебийніс",
-                        AvatarFileName = null,
-                        Email = "pavlo.perebyinis@nure.ua",
-                        PlusGuests = 0,
-                        CategoryId = 0,
-                        WillCome = true,
-                    },
-                    Geolocation = "@50.401699,30.252512",
-                    Date = new DateTime(2023, 11, 15),
-                    GuestCountRange = new RangeEntity()
-                    {
-                        Min = 70,
-                        Max = 100,
-                    },
-                    GuestMap = null,
-                    WeddingPlan = null,
-                    WeddingTeam = { },
-                    ApproximateBudget = new RangeEntity()
-                    {
-                        Min = 70000,
-                        Max = 100000,
-                    },
-                    Budget = null,
-                });
+            //services.BuildServiceProvider()
+            //    .GetRequiredService<ICeremonicMongoDbContext>()
+            //    .Weddings.InsertOne(new WeddingEntity()
+            //    {
+            //        UserId = 1,
+            //        Wife = new PersonEntity()
+            //        {
+            //            Id = Guid.NewGuid(),
+            //            FullName = "Ганна Павлюк",
+            //            AvatarFileName = null,
+            //            Email = "hanna.pavliuk@nure.ua",
+            //            PlusGuests = 0,
+            //            CategoryId = 0,
+            //            WillCome = true,
+            //        },
+            //        Husband = new PersonEntity()
+            //        {
+            //            Id = Guid.NewGuid(),
+            //            FullName = "Павло Перебийніс",
+            //            AvatarFileName = null,
+            //            Email = "pavlo.perebyinis@nure.ua",
+            //            PlusGuests = 0,
+            //            CategoryId = 0,
+            //            WillCome = true,
+            //        },
+            //        Geolocation = "@50.401699,30.252512",
+            //        Date = new DateTime(2023, 11, 15),
+            //        GuestCountRange = new RangeEntity()
+            //        {
+            //            Min = 70,
+            //            Max = 100,
+            //        },
+            //        GuestMap = null,
+            //        WeddingPlan = null,
+            //        WeddingTeam = { },
+            //        ApproximateBudget = new RangeEntity()
+            //        {
+            //            Min = 70000,
+            //            Max = 100000,
+            //        },
+            //        Budget = null,
+            //    });
 
 
 

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using System.Xml.Linq;
+
+using CeremonicBackend.DB.Relational;
 
 namespace CeremonicBackend.Controllers
 {
@@ -8,15 +11,16 @@ namespace CeremonicBackend.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private CeremonicRelationalDbContext _relationalDB { get; set; }
+        public UsersController(CeremonicRelationalDbContext db)
+        {
+            _relationalDB = db;
+        }
+
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = new[]
-            {
-                new { Name = "Alice" },
-                new { Name = "Paul" },
-                new { Name = "Anderew" },
-            };
+            var users = _relationalDB.Users;
 
             return Ok(users);
         }
