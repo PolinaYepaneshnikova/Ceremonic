@@ -1,19 +1,22 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Threading.Tasks;
+
+using CeremonicBackend.DB.Relational;
+using System.Linq;
 
 namespace CeremonicBackend
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var app = CreateHostBuilder(args).Build();
+            await MigrateDatabaseAsync(app);
+            app.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -22,5 +25,33 @@ namespace CeremonicBackend
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public static async Task MigrateDatabaseAsync(IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+
+            var relationalDB = scope.ServiceProvider.GetRequiredService<CeremonicRelationalDbContext>();
+            await relationalDB.Database.MigrateAsync();
+
+            if (relationalDB.Users.ToArray().Length == 0)
+            {
+                relationalDB.Users.Add(new UserEntity()
+                {
+                    FirstName = "Ганна",
+                    LastName = "Павлюк",
+                });
+                relationalDB.SaveChanges();
+            }
+
+            if (relationalDB.UserLoginInfos.ToArray().Length == 0)
+            {
+                relationalDB.UserLoginInfos.Add(new UserLoginInfoEntity()
+                {
+                    Email = "hanna.pavliuk@nure.ua",
+                    PasswordHash = "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ=",
+                });
+                relationalDB.SaveChanges();
+            }
+        }
     }
 }

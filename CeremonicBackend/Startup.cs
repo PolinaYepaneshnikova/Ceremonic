@@ -1,5 +1,3 @@
-using CeremonicBackend.DB.NoSQL;
-using CeremonicBackend.DB.Relational;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using CeremonicBackend.DB.NoSQL;
+using CeremonicBackend.DB.Relational;
 
 namespace CeremonicBackend
 {
@@ -31,17 +33,17 @@ namespace CeremonicBackend
             services.AddDbContext<CeremonicRelationalDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
 
-            services.AddScoped<ICeremonicMongoDbContext, CeremonicMongoDbContext>(
-                provider =>
-                    new CeremonicMongoDbContext(
-                        provider.GetRequiredService<IConfiguration>().GetConnectionString("MongoDbConnection"),
-                        provider.GetRequiredService<IConfiguration>().GetConnectionString("MongoDbName")
-                    )
-            );
+            //services.AddScoped<ICeremonicMongoDbContext, CeremonicMongoDbContext>(
+            //    provider =>
+            //        new CeremonicMongoDbContext(
+            //            provider.GetRequiredService<IConfiguration>().GetConnectionString("MongoDbConnection"),
+            //            provider.GetRequiredService<IConfiguration>().GetConnectionString("MongoDbName")
+            //        )
+            //);
 
-            services.BuildServiceProvider()
-                .GetRequiredService<ICeremonicMongoDbContext>()
-                .CreateIndexes();
+            //services.BuildServiceProvider()
+            //    .GetRequiredService<ICeremonicMongoDbContext>()
+            //    .CreateIndexes();
 
             //services.BuildServiceProvider()
             //    .GetRequiredService<ICeremonicMongoDbContext>()
