@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 
 using CeremonicBackend.DB.NoSQL;
 using CeremonicBackend.DB.Relational;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace CeremonicBackend
 {
@@ -33,6 +35,29 @@ namespace CeremonicBackend
             services.AddDbContext<CeremonicRelationalDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
 
+            var relationalDB = services.BuildServiceProvider()
+                .GetRequiredService<CeremonicRelationalDbContext>();
+
+            if (relationalDB.Users.ToArray().Length == 0)
+            {
+                relationalDB.Users.Add(new UserEntity()
+                {
+                    FirstName = "Ганна",
+                    LastName = "Павлюк",
+                });
+                relationalDB.SaveChanges();
+            }
+
+            if (relationalDB.UserLoginInfos.ToArray().Length == 0)
+            {
+                relationalDB.UserLoginInfos.Add(new UserLoginInfoEntity()
+                {
+                    Email = "hanna.pavliuk@nure.ua",
+                    PasswordHash = "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ=",
+                });
+                relationalDB.SaveChanges();
+            }
+
             services.AddScoped<ICeremonicMongoDbContext, CeremonicMongoDbContext>(
                 provider =>
                     new CeremonicMongoDbContext(
@@ -41,13 +66,14 @@ namespace CeremonicBackend
                     )
             );
 
-            services.BuildServiceProvider()
-                .GetRequiredService<ICeremonicMongoDbContext>()
-                .CreateIndexes();
+            var mongoDB = services.BuildServiceProvider()
+                .GetRequiredService<ICeremonicMongoDbContext>();
 
-            services.BuildServiceProvider()
-                .GetRequiredService<ICeremonicMongoDbContext>()
-                .Weddings.InsertOne(new WeddingEntity()
+            mongoDB.CreateIndexes();
+
+            if (mongoDB.Weddings.Find(new BsonDocument()).ToList().Count == 0)
+            {
+                mongoDB.Weddings.InsertOne(new WeddingEntity()
                 {
                     UserId = 1,
                     Wife = new PersonEntity()
@@ -87,6 +113,7 @@ namespace CeremonicBackend
                     },
                     Budget = null,
                 });
+            }
 
 
 
