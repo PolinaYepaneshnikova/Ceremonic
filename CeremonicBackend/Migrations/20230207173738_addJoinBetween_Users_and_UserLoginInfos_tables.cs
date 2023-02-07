@@ -6,9 +6,6 @@ namespace CeremonicBackend.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ScalarReturn<int>");
-
             migrationBuilder.AlterColumn<int>(
                 name: "Id",
                 table: "Users",
@@ -41,16 +38,6 @@ namespace CeremonicBackend.Migrations
                 oldClrType: typeof(int),
                 oldType: "INTEGER")
                 .Annotation("Sqlite:Autoincrement", true);
-
-            migrationBuilder.CreateTable(
-                name: "ScalarReturn<int>",
-                columns: table => new
-                {
-                    Value = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                });
         }
     }
 }
