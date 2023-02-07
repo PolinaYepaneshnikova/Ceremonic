@@ -6,8 +6,5 @@ namespace CeremonicBackend.DB.Relational
     {
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-
-        [ForeignKey("Id")]
-        public virtual UserEntity User { get; set; }
     }
 }
