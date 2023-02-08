@@ -13,10 +13,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using CeremonicBackend.DB.NoSQL;
+using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using CeremonicBackend.Authentification;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using CeremonicBackend.Repositories.Interfaces;
+using CeremonicBackend.Repositories;
+using CeremonicBackend.Services.Interfaces;
+using CeremonicBackend.Services;
 
 namespace CeremonicBackend
 {
@@ -32,6 +39,8 @@ namespace CeremonicBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Configuration.Bind("AuthOptions", new AuthOptions());
+
             services.AddDbContext<CeremonicRelationalDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
 
@@ -71,7 +80,7 @@ namespace CeremonicBackend
 
             mongoDB.CreateIndexes();
 
-            if (mongoDB.Weddings.Find(new BsonDocument()).ToList().Count == 0)
+            /*if (mongoDB.Weddings.Find(new BsonDocument()).ToList().Count == 0)
             {
                 mongoDB.Weddings.InsertOne(new WeddingEntity()
                 {
@@ -113,7 +122,15 @@ namespace CeremonicBackend
                     },
                     Budget = null,
                 });
-            }
+            }*/
+
+
+
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CeremonicBackend", Version = "v1" });
+            });
 
 
 
@@ -128,11 +145,50 @@ namespace CeremonicBackend
                     });
             });
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CeremonicBackend", Version = "v1" });
-            });
+
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+
+
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = AuthOptions.Audience,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            // If the request is for our hub...
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/messenger") || path.StartsWithSegments("/IoT")))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

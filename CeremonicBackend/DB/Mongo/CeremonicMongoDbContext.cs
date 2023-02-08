@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace CeremonicBackend.DB.NoSQL
+namespace CeremonicBackend.DB.Mongo
 {
     public class CeremonicMongoDbContext : ICeremonicMongoDbContext
     {
