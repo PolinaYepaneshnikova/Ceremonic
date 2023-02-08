@@ -1,0 +1,30 @@
+.index-page{
+    font-family: 'Montserrat';
+}
+.search{
+    height: 397px;
+    width: 100vw;
+    position: relative;
+    border-bottom: 0.254px solid #979797;;
+    background: linear-gradient(180deg, rgba(84,219,228,0.9289916650253851) 0%, rgba(255,255,255,1) 56%);
+
+    padding-top: 4%;
+    padding-left: 6vw;
+}
+.search::before{
+    content: '';
+    position: absolute;
+    background: url(../../assets/image/Page_IndexPage/search.png) no-repeat;
+    background-size: cover;
+    background-position: 50%;
+    clip-path: polygon(12% 0, 100% 0%, 100% 100%, 0% 100%);
+    
+    width: 60%;
+    height: 100%;
+
+    top: 0;
+    right: 0;
+}
+.search-text{
+    
+}
