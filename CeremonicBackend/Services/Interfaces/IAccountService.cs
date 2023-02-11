@@ -1,5 +1,6 @@
-﻿using CeremonicBackend.WebApiModels;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+
+using CeremonicBackend.WebApiModels;
 
 namespace CeremonicBackend.Services.Interfaces
 {

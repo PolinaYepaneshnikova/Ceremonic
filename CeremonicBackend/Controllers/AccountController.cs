@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
+using System.Linq;
 using System;
 
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
-using System.Linq;
 
 namespace CeremonicBackend.Controllers
 {
@@ -18,10 +18,12 @@ namespace CeremonicBackend.Controllers
     public class AccountController : ControllerBase
     {
         IAccountService _accountService { get; set; }
+        IGoogleAccountService _googleAccountService { get; set; }
         IUserService _userService { get; set; }
-        public AccountController(IAccountService accountService, IUserService userService)
+        public AccountController(IAccountService accountService, IGoogleAccountService googleAccountService, IUserService userService)
         {
             _accountService = accountService;
+            _googleAccountService = googleAccountService;
             _userService = userService;
         }
 
@@ -58,6 +60,54 @@ namespace CeremonicBackend.Controllers
             try
             {
                 return await _accountService.Registration(model);
+            }
+            catch (AlreadyExistAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User already exist"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("googleLogin")]
+        public async Task<ActionResult<JwtApiModel>> GoogleLogin([FromBody] TokenIdApiModel model)
+        {
+            try
+            {
+                return await _googleAccountService.Login(model.TokenId);
+            }
+            catch (NotFoundAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("googleRegistration")]
+        public async Task<ActionResult<JwtApiModel>> GoogleRegistration([FromBody] GoogleRegistrationApiModel model)
+        {
+            try
+            {
+                return await _googleAccountService.Registration(model);
             }
             catch (AlreadyExistAppException)
             {

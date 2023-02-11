@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿// using Microsoft.IdentityModel.JsonWebTokens;
+
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System;
 using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
 
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Exceptions;
@@ -90,7 +93,7 @@ namespace CeremonicBackend.Services
 
 
 
-        protected static string HashPassword(string password)
+        static string HashPassword(string password)
         {
             if (password == null)
             {
@@ -104,12 +107,17 @@ namespace CeremonicBackend.Services
             return Convert.ToBase64String(hashPass);
         }
 
-        protected ClaimsIdentity GetIdentity(string email, string role)
+        public static ClaimsIdentity GetIdentity(string email, string role)
         {
             var claims = new List<Claim>
             {
                 new Claim("Email", email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                new Claim(
+                    JwtRegisteredClaimNames.Sub,
+                    MyCryptography.Encrypt(AuthOptions.JwtEmailEncryption, email)
+                ),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token",
