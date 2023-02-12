@@ -58,7 +58,7 @@ namespace CeremonicBackend.Services
             return new JwtApiModel(jwtString);
         }
 
-        public async Task<UserApiModel> Registration(RegistrationApiModel dto)
+        public async Task<JwtApiModel> Registration(RegistrationApiModel dto)
         {
             if (string.IsNullOrEmpty(dto.Email))
             {
@@ -88,7 +88,10 @@ namespace CeremonicBackend.Services
             user = await _UoW.UserRepository.Add(user);
             await _UoW.SaveChanges();
 
-            return user.ToUserApiModel();
+            ClaimsIdentity claims = GetIdentity(dto.Email, "User");
+            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
+
+            return new JwtApiModel(jwtString);
         }
 
 

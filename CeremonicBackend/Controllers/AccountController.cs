@@ -27,7 +27,12 @@ namespace CeremonicBackend.Controllers
             _userService = userService;
         }
 
-
+        /*{
+          "firstName": "Павло",
+          "lastName": "Дунайський",
+          "email": "PavloDunayskyy@net.ua,
+          "password": "1234"
+        }*/
 
         [HttpPost]
         [Route("login")]
@@ -55,7 +60,7 @@ namespace CeremonicBackend.Controllers
 
         [HttpPost]
         [Route("registration")]
-        public async Task<ActionResult<UserApiModel>> Registration([FromBody] RegistrationApiModel model)
+        public async Task<ActionResult<JwtApiModel>> Registration([FromBody] RegistrationApiModel model)
         {
             try
             {
