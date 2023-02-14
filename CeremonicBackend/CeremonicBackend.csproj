@@ -25,18 +25,12 @@
 
   <ItemGroup>
     <Folder Include="AppData\" />
-    <Folder Include="Authentification\" />
     <Folder Include="DTOs\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="FileStorage\Avatars\" />
     <Folder Include="FileStorage\Files\" />
     <Folder Include="FileStorage\Images\" />
-    <Folder Include="Mappings\" />
     <Folder Include="Quartz\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
     <Folder Include="SignalRHubs\" />
-    <Folder Include="WebApiModels\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 using CeremonicBackend.DB.Relational;
 using System;
 
-namespace CeremonicBackend.DB.NoSQL
+namespace CeremonicBackend.DB.Mongo
 {
     public class WeddingEntity : JoinedToUserEntity
     {

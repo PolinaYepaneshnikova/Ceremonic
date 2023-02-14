@@ -1,4 +1,4 @@
-﻿using CeremonicBackend.DB.NoSQL;
+﻿using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

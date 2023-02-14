@@ -2,7 +2,7 @@
 
 using CeremonicBackend.DB.Relational;
 
-namespace CeremonicBackend.DB.NoSQL
+namespace CeremonicBackend.DB.Mongo
 {
     public class PersonEntity : BaseEntity<Guid>
     {

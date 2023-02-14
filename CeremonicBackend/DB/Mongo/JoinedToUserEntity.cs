@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace CeremonicBackend.DB.NoSQL
+namespace CeremonicBackend.DB.Mongo
 {
     public abstract class JoinedToUserEntity
     {
