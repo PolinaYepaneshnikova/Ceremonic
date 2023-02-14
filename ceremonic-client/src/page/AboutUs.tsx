@@ -124,7 +124,7 @@ function AboutUs() {
 
           <div className="motivation">
             <p>Швиденько реєструйся та спробуй можливості Ceremonic! </p>
-            <Button kind='secondary' >Зареєструватися</Button>
+            <Button kind='button_secondary' >Зареєструватися</Button>
             <div className='supp'><Vector className='vec' /> &nbsp;&nbsp; Ви постачальник?</div>
           </div>
 

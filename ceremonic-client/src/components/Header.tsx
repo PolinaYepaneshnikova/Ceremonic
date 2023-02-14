@@ -9,17 +9,17 @@ function Header() {
     <div className={styles.header}>
       <img src={nameProduct} className={styles.nameProduct} alt='Ceremonic' width={112} height={23}></img>
       <div className={styles.center}>
-        <Button kind='primary'>Планування</Button>
-        <Button kind='primary'>Місця</Button>
-        <Button kind='primary'>Послуги</Button>
-        <Button kind='primary'>Статті</Button>
-        <Button kind='primary'>Тест</Button>
-        <Button kind='primary'>Про нас</Button>
+        <Button kind='button_primary'>Планування</Button>
+        <Button kind='button_primary'>Місця</Button>
+        <Button kind='button_primary'>Послуги</Button>
+        <Button kind='button_primary'>Статті</Button>
+        <Button kind='button_primary'>Тест</Button>
+        <Button kind='button_primary'>Про нас</Button>
       </div>
       <div className={styles.auth}>
-        <div className={styles.supplier}><Vector className='vector' /> &nbsp; Ви постачальник?</div>
-        <Button kind='secondary' >Увійти</Button>
-        <Button kind='secondary' >Зареєструватися</Button>
+        <div className={styles.supplier}><Vector className={styles.vector} /> &nbsp; Ви постачальник?</div>&nbsp;
+        <Button kind='button_secondary' >Увійти</Button>
+        <Button kind='button_secondary' >Зареєструватися</Button>
 
       </div>
     </div>
