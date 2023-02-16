@@ -57,16 +57,6 @@ namespace CeremonicBackend
                 relationalDB.SaveChanges();
             }
 
-            if (relationalDB.UserLoginInfos.ToArray().Length == 0)
-            {
-                relationalDB.UserLoginInfos.Add(new UserLoginInfoEntity()
-                {
-                    Email = "hanna.pavliuk@nure.ua",
-                    PasswordHash = "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ=",
-                });
-                relationalDB.SaveChanges();
-            }
-
             services.AddScoped<ICeremonicMongoDbContext, CeremonicMongoDbContext>(
                 provider =>
                     new CeremonicMongoDbContext(
@@ -79,50 +69,6 @@ namespace CeremonicBackend
                 .GetRequiredService<ICeremonicMongoDbContext>();
 
             mongoDB.CreateIndexes();
-
-            /*if (mongoDB.Weddings.Find(new BsonDocument()).ToList().Count == 0)
-            {
-                mongoDB.Weddings.InsertOne(new WeddingEntity()
-                {
-                    UserId = 1,
-                    Wife = new PersonEntity()
-                    {
-                        Id = Guid.NewGuid(),
-                        FullName = "Ганна Павлюк",
-                        AvatarFileName = null,
-                        Email = "hanna.pavliuk@nure.ua",
-                        PlusGuests = 0,
-                        CategoryId = 0,
-                        WillCome = true,
-                    },
-                    Husband = new PersonEntity()
-                    {
-                        Id = Guid.NewGuid(),
-                        FullName = "Павло Перебийніс",
-                        AvatarFileName = null,
-                        Email = "pavlo.perebyinis@nure.ua",
-                        PlusGuests = 0,
-                        CategoryId = 0,
-                        WillCome = true,
-                    },
-                    Geolocation = "@50.401699,30.252512",
-                    Date = new DateTime(2023, 11, 15),
-                    GuestCountRange = new RangeEntity()
-                    {
-                        Min = 70,
-                        Max = 100,
-                    },
-                    GuestMap = null,
-                    WeddingPlan = null,
-                    WeddingTeam = { },
-                    ApproximateBudget = new RangeEntity()
-                    {
-                        Min = 70000,
-                        Max = 100000,
-                    },
-                    Budget = null,
-                });
-            }*/
 
 
 

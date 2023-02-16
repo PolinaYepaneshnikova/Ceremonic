@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
+using System.Linq;
 using System;
 
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
-using System.Linq;
 
 namespace CeremonicBackend.Controllers
 {
@@ -59,6 +59,54 @@ namespace CeremonicBackend.Controllers
         [HttpPost]
         [Route("registration")]
         public async Task<ActionResult<JwtApiModel>> Registration([FromBody] RegistrationApiModel model)
+        {
+            try
+            {
+                return await _accountService.Registration(model);
+            }
+            catch (AlreadyExistAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User already exist"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("googleLogin")]
+        public async Task<ActionResult<JwtApiModel>> GoogleLogin([FromBody] TokenIdApiModel model)
+        {
+            try
+            {
+                return await _accountService.Login(model.TokenId);
+            }
+            catch (NotFoundAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("googleRegistration")]
+        public async Task<ActionResult<JwtApiModel>> GoogleRegistration([FromBody] GoogleRegistrationApiModel model)
         {
             try
             {
