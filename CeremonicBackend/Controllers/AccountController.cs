@@ -18,12 +18,10 @@ namespace CeremonicBackend.Controllers
     public class AccountController : ControllerBase
     {
         IAccountService _accountService { get; set; }
-        IGoogleAccountService _googleAccountService { get; set; }
         IUserService _userService { get; set; }
-        public AccountController(IAccountService accountService, IGoogleAccountService googleAccountService, IUserService userService)
+        public AccountController(IAccountService accountService, IUserService userService)
         {
             _accountService = accountService;
-            _googleAccountService = googleAccountService;
             _userService = userService;
         }
 
@@ -88,7 +86,7 @@ namespace CeremonicBackend.Controllers
         {
             try
             {
-                return await _googleAccountService.Login(model.TokenId);
+                return await _accountService.Login(model.TokenId);
             }
             catch (NotFoundAppException)
             {
@@ -112,7 +110,7 @@ namespace CeremonicBackend.Controllers
         {
             try
             {
-                return await _googleAccountService.Registration(model);
+                return await _accountService.Registration(model);
             }
             catch (AlreadyExistAppException)
             {

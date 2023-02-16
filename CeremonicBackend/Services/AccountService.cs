@@ -8,13 +8,15 @@ using System;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 
+using Google.Apis.Auth;
+using static Google.Apis.Auth.GoogleJsonWebSignature;
+
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Exceptions;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Authentification;
-using CeremonicBackend.Mappings;
 
 namespace CeremonicBackend.Services
 {
@@ -96,7 +98,63 @@ namespace CeremonicBackend.Services
 
 
 
-        static string HashPassword(string password)
+        public async Task<JwtApiModel> Login(string tokenId)
+        {
+            Payload payload =
+                await GoogleJsonWebSignature.ValidateAsync(
+                    tokenId,
+                    new GoogleJsonWebSignature.ValidationSettings()
+                );
+
+            UserEntity user = await _UoW.UserRepository.GetByEmail(payload.Email);
+            if (user is null)
+            {
+                throw new NotFoundAppException($"user not found");
+            }
+
+            ClaimsIdentity claims = AccountService.GetIdentity(payload.Email, "User");
+            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
+
+            return new JwtApiModel(jwtString);
+        }
+
+        public async Task<JwtApiModel> Registration(GoogleRegistrationApiModel dto)
+        {
+            Payload payload =
+                await GoogleJsonWebSignature.ValidateAsync(
+                    dto.TokenId,
+                    new GoogleJsonWebSignature.ValidationSettings()
+                );
+
+            UserEntity user = await _UoW.UserRepository.GetByEmail(payload.Email);
+
+            if (user is not null)
+            {
+                throw new AlreadyExistAppException($"user already exist");
+            }
+
+            user = new UserEntity()
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                LoginInfo = new UserLoginInfoEntity()
+                {
+                    Email = payload.Email,
+                    PasswordHash = "GoogleAPI",
+                },
+            };
+            user = await _UoW.UserRepository.Add(user);
+            await _UoW.SaveChanges();
+
+            ClaimsIdentity claims = AccountService.GetIdentity(payload.Email, "User");
+            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
+
+            return new JwtApiModel(jwtString);
+        }
+
+
+
+        public static string HashPassword(string password)
         {
             if (password == null)
             {
