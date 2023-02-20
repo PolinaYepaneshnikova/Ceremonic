@@ -10,6 +10,8 @@ using System;
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
+using CeremonicBackend.Services;
+using CeremonicBackend.Mappings;
 
 namespace CeremonicBackend.Controllers
 {
@@ -17,12 +19,22 @@ namespace CeremonicBackend.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        IAccountService _accountService { get; set; }
         IUserService _userService { get; set; }
-        public AccountController(IAccountService accountService, IUserService userService)
+        IAccountService _accountService { get; set; }
+        EmailAccountService _emailAccountService { get; set; }
+        GoogleAccountService _googleAccountService { get; set; }
+        ClientCreatorService _clientCreatorService { get; set; }
+        public AccountController(
+            IUserService userService,
+            EmailAccountService emailAccountService,
+            GoogleAccountService googleAccountService,
+            ClientCreatorService clientCreatorService
+            )
         {
-            _accountService = accountService;
             _userService = userService;
+            _emailAccountService = emailAccountService;
+            _googleAccountService = googleAccountService;
+            _clientCreatorService = clientCreatorService;
         }
 
         /*{
@@ -34,98 +46,54 @@ namespace CeremonicBackend.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<JwtApiModel>> Login([FromBody] LoginApiModel model)
+        public async Task<ActionResult<JwtApiModel>> EmailLogin([FromBody] LoginApiModel model)
         {
-            try
-            {
-                return await _accountService.Login(model.Email, model.Password);
-            }
-            catch (NotFoundAppException)
-            {
-                return BadRequest(new
-                {
-                    Error = "User not exists"
-                });
-            }
-            catch (Exception exp)
-            {
-                return BadRequest(new
-                {
-                    Error = exp.Message
-                });
-            }
+            _emailAccountService.Email = model.Email;
+            _emailAccountService.Password = model.Password;
+
+            _accountService = _emailAccountService;
+
+            return await Login();
         }
 
         [HttpPost]
         [Route("registration")]
-        public async Task<ActionResult<JwtApiModel>> Registration([FromBody] RegistrationApiModel model)
+        public async Task<ActionResult<JwtApiModel>> EmailRegistration([FromBody] RegistrationApiModel model)
         {
-            try
-            {
-                return await _accountService.Registration(model);
-            }
-            catch (AlreadyExistAppException)
-            {
-                return BadRequest(new
-                {
-                    Error = "User already exist"
-                });
-            }
-            catch (Exception exp)
-            {
-                return BadRequest(new
-                {
-                    Error = exp.Message
-                });
-            }
+            _emailAccountService.Email = model.Email;
+            _emailAccountService.Password = model.Password;
+
+            _accountService = _emailAccountService;
+
+            _clientCreatorService.Model = model;
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Registration();
         }
 
         [HttpPost]
         [Route("googleLogin")]
         public async Task<ActionResult<JwtApiModel>> GoogleLogin([FromBody] TokenIdApiModel model)
         {
-            try
-            {
-                return await _accountService.Login(model.TokenId);
-            }
-            catch (NotFoundAppException)
-            {
-                return BadRequest(new
-                {
-                    Error = "User not exists"
-                });
-            }
-            catch (Exception exp)
-            {
-                return BadRequest(new
-                {
-                    Error = exp.Message
-                });
-            }
+            _googleAccountService.TokenId = model.TokenId;
+
+            _accountService = _googleAccountService;
+
+            return await Login();
         }
 
         [HttpPost]
         [Route("googleRegistration")]
         public async Task<ActionResult<JwtApiModel>> GoogleRegistration([FromBody] GoogleRegistrationApiModel model)
         {
-            try
-            {
-                return await _accountService.Registration(model);
-            }
-            catch (AlreadyExistAppException)
-            {
-                return BadRequest(new
-                {
-                    Error = "User already exist"
-                });
-            }
-            catch (Exception exp)
-            {
-                return BadRequest(new
-                {
-                    Error = exp.Message
-                });
-            }
+            _googleAccountService.TokenId = model.TokenId;
+
+            _accountService = _googleAccountService;
+
+            _clientCreatorService.Model = model.ToRegistrationApiModel();
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Registration();
         }
 
 
@@ -146,6 +114,54 @@ namespace CeremonicBackend.Controllers
                 return BadRequest(new
                 {
                     Error = "User not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+
+
+
+
+        private async Task<ActionResult<JwtApiModel>> Login()
+        {
+            try
+            {
+                return await _accountService.Login();
+            }
+            catch (NotFoundAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        private async Task<ActionResult<JwtApiModel>> Registration()
+        {
+            try
+            {
+                return await _accountService.Registration();
+            }
+            catch (AlreadyExistAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User already exist"
                 });
             }
             catch (Exception exp)

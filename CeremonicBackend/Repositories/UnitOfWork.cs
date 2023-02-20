@@ -1,7 +1,8 @@
-﻿using CeremonicBackend.DB.Mongo;
+﻿using System.Threading.Tasks;
+
+using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Repositories.Interfaces;
-using System.Threading.Tasks;
 
 namespace CeremonicBackend.Repositories
 {
@@ -11,6 +12,7 @@ namespace CeremonicBackend.Repositories
         protected ICeremonicMongoDbContext _mongoDb { get; set; }
 
         public IUserRepository UserRepository { get; set; }
+        public IWeddingRepository WeddingRepository { get; set; }
 
         public UnitOfWork(CeremonicRelationalDbContext relationalDb, ICeremonicMongoDbContext mongoDb)
         {
@@ -18,6 +20,8 @@ namespace CeremonicBackend.Repositories
             _mongoDb = mongoDb;
 
             UserRepository = new UserRepository(relationalDb);
+
+            WeddingRepository = new WeddingRepository(mongoDb);
         }
 
         public async Task<int> SaveChanges() => await _relationalDb.SaveChangesAsync();

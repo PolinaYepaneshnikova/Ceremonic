@@ -5,8 +5,8 @@ namespace CeremonicBackend.DB.Mongo
 {
     public class WeddingEntity : JoinedToUserEntity
     {
-        public PersonEntity Wife { get; set; }
-        public PersonEntity Husband { get; set; }
+        public PersonEntity User1 { get; set; }
+        public PersonEntity User2 { get; set; }
         public string Geolocation { get; set; }
         public DateTime Date { get; set; }
         public RangeEntity GuestCountRange { get; set; }

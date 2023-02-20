@@ -12,9 +12,9 @@ namespace CeremonicBackend.Repositories
 {
     public class BaseMongoRepositoryWithIdKey<Entity, IdType> : IBaseRepository<Entity, IdType> where Entity : BaseEntity<IdType>
     {
-        protected CeremonicMongoDbContext _db;
+        protected ICeremonicMongoDbContext _db;
         protected string _collectionName;
-        public BaseMongoRepositoryWithIdKey(CeremonicMongoDbContext db, string collectionName)
+        public BaseMongoRepositoryWithIdKey(ICeremonicMongoDbContext db, string collectionName)
         {
             _db = db;
         }

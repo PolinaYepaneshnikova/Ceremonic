@@ -1,25 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using CeremonicBackend.Authentification;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Repositories;
 using CeremonicBackend.Services.Interfaces;
@@ -46,16 +39,6 @@ namespace CeremonicBackend
 
             var relationalDB = services.BuildServiceProvider()
                 .GetRequiredService<CeremonicRelationalDbContext>();
-
-            if (relationalDB.Users.ToArray().Length == 0)
-            {
-                relationalDB.Users.Add(new UserEntity()
-                {
-                    FirstName = "Ганна",
-                    LastName = "Павлюк",
-                });
-                relationalDB.SaveChanges();
-            }
 
             services.AddScoped<ICeremonicMongoDbContext, CeremonicMongoDbContext>(
                 provider =>
@@ -95,10 +78,12 @@ namespace CeremonicBackend
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<EmailAccountService>();
+            services.AddScoped<GoogleAccountService>();
+            services.AddScoped<ClientCreatorService>();
+            services.AddScoped<ProviderCreatorService>();
 
 
 
@@ -126,7 +111,7 @@ namespace CeremonicBackend
                             // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments("/messenger") || path.StartsWithSegments("/IoT")))
+                                (path.StartsWithSegments("/messenger")))
                             {
                                 // Read the token out of the query string
                                 context.Token = accessToken;

@@ -1,6 +1,4 @@
-﻿// using Microsoft.IdentityModel.JsonWebTokens;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,20 +6,19 @@ using System;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 
-using Google.Apis.Auth;
-using static Google.Apis.Auth.GoogleJsonWebSignature;
-
-using CeremonicBackend.DB.Relational;
-using CeremonicBackend.Exceptions;
-using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Authentification;
+using CeremonicBackend.Exceptions;
 
-namespace CeremonicBackend.Services
+namespace CeremonicBackend.Services.Interfaces
 {
-    public class AccountService : IAccountService
+    public abstract class AccountService : IAccountService
     {
+        public IUserCreatorService UserCreatorService { get; set; }
+
+        protected dynamic ReturnedValueFromUserCreatorService { get; set; }
+
         protected IUnitOfWork _UoW { get; set; }
         public AccountService(IUnitOfWork uow)
         {
@@ -30,127 +27,40 @@ namespace CeremonicBackend.Services
 
 
 
-        public async Task<JwtApiModel> Login(string email, string password)
+        public virtual async Task<JwtApiModel> Login()
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException($"{nameof(email)}");
-            }
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new ArgumentException($"{nameof(password)}");
-            }
+            await ValidateInputOrThrowExeption();
 
-            UserEntity user = await _UoW.UserRepository.GetByEmail(email);
-            if (user is null)
+            if (!await DoesUserExist())
             {
                 throw new NotFoundAppException($"user not found");
             }
 
-            string inputHashPass = HashPassword(password);
-            string userHashPass = await _UoW.UserRepository.GetHashPasswordById(user.Id);
-            if (userHashPass != inputHashPass)
-            {
-                throw new NotFoundAppException($"uncorrect password");
-            }
+            await AuthenticateUserOrThrowExeption();
 
-            ClaimsIdentity claims = GetIdentity(email, "User");
-            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
-
-            return new JwtApiModel(jwtString);
+            return GenerateJwt();
         }
 
-        public async Task<JwtApiModel> Registration(RegistrationApiModel dto)
+        public virtual async Task<JwtApiModel> Registration()
         {
-            if (string.IsNullOrEmpty(dto.Email))
-            {
-                throw new ArgumentException($"{nameof(dto.Email)}");
-            }
-            if (string.IsNullOrEmpty(dto.Password))
-            {
-                throw new ArgumentException($"{nameof(dto.Password)} not specified");
-            }
+            await ValidateInputOrThrowExeption();
 
-            UserEntity user = await _UoW.UserRepository.GetByEmail(dto.Email);
-            if (user is not null)
+            if (await DoesUserExist())
             {
                 throw new AlreadyExistAppException($"user already exist");
             }
 
-            user = new UserEntity()
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                LoginInfo = new UserLoginInfoEntity()
-                {
-                    Email = dto.Email,
-                    PasswordHash = HashPassword(dto.Password),
-                },
-            };
-            user = await _UoW.UserRepository.Add(user);
-            await _UoW.SaveChanges();
+            ReturnedValueFromUserCreatorService = await UserCreatorService.Create();
 
-            ClaimsIdentity claims = GetIdentity(dto.Email, "User");
-            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
-
-            return new JwtApiModel(jwtString);
+            return GenerateJwt();
         }
 
 
 
-        public async Task<JwtApiModel> Login(string tokenId)
-        {
-            Payload payload =
-                await GoogleJsonWebSignature.ValidateAsync(
-                    tokenId,
-                    new GoogleJsonWebSignature.ValidationSettings()
-                );
-
-            UserEntity user = await _UoW.UserRepository.GetByEmail(payload.Email);
-            if (user is null)
-            {
-                throw new NotFoundAppException($"user not found");
-            }
-
-            ClaimsIdentity claims = AccountService.GetIdentity(payload.Email, "User");
-            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
-
-            return new JwtApiModel(jwtString);
-        }
-
-        public async Task<JwtApiModel> Registration(GoogleRegistrationApiModel dto)
-        {
-            Payload payload =
-                await GoogleJsonWebSignature.ValidateAsync(
-                    dto.TokenId,
-                    new GoogleJsonWebSignature.ValidationSettings()
-                );
-
-            UserEntity user = await _UoW.UserRepository.GetByEmail(payload.Email);
-
-            if (user is not null)
-            {
-                throw new AlreadyExistAppException($"user already exist");
-            }
-
-            user = new UserEntity()
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                LoginInfo = new UserLoginInfoEntity()
-                {
-                    Email = payload.Email,
-                    PasswordHash = "GoogleAPI",
-                },
-            };
-            user = await _UoW.UserRepository.Add(user);
-            await _UoW.SaveChanges();
-
-            ClaimsIdentity claims = AccountService.GetIdentity(payload.Email, "User");
-            string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
-
-            return new JwtApiModel(jwtString);
-        }
+        public abstract Task ValidateInputOrThrowExeption();
+        public abstract Task<bool> DoesUserExist();
+        public abstract Task AuthenticateUserOrThrowExeption();
+        public abstract JwtApiModel GenerateJwt();
 
 
 
@@ -168,8 +78,11 @@ namespace CeremonicBackend.Services
             return Convert.ToBase64String(hashPass);
         }
 
-        public static ClaimsIdentity GetIdentity(string email, string role)
+        public virtual ClaimsIdentity GetIdentity(dynamic identities)
         {
+            string email = identities.Email;
+            string role = identities.Role;
+
             var claims = new List<Claim>
             {
                 new Claim("Email", email),

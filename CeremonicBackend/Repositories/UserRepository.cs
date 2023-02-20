@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 
 using CeremonicBackend.DB.Relational;
-using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Repositories.Interfaces;
 
 namespace CeremonicBackend.Repositories

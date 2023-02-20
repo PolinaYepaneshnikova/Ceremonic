@@ -6,6 +6,8 @@ namespace CeremonicBackend.Repositories.Interfaces
     {
         IUserRepository UserRepository { get; }
 
+        IWeddingRepository WeddingRepository { get; }
+
         Task<int> SaveChanges();
     }
 }

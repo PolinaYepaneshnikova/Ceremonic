@@ -4,7 +4,6 @@ using System;
 
 using MongoDB.Driver;
 
-using CeremonicBackend.DB.Relational;
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.Repositories.Interfaces;
 
@@ -12,26 +11,29 @@ namespace CeremonicBackend.Repositories
 {
     public class BaseMongoRepositoryWithUserIdKey<Entity> : IBaseRepository<Entity, int> where Entity : JoinedToUserEntity
     {
-        protected CeremonicMongoDbContext _db;
-        protected string _collectionName;
-        public BaseMongoRepositoryWithUserIdKey(CeremonicMongoDbContext db, string collectionName)
+        protected ICeremonicMongoDbContext _db;
+
+        public string CollectionName { get; set; }
+
+        public BaseMongoRepositoryWithUserIdKey(ICeremonicMongoDbContext db, string collectionName)
         {
             _db = db;
+            CollectionName = collectionName;
         }
 
         public async Task<Entity> GetById(int userId)
-            => (await _db.Database.GetCollection<Entity>(_collectionName)
+            => (await _db.Database.GetCollection<Entity>(CollectionName)
             .FindAsync(e => e.UserId.Equals(userId))).FirstOrDefault();
 
         public async Task<IQueryable<Entity>> GetByPredicate(Func<Entity, bool> predicate)
-            => (await _db.Database.GetCollection<Entity>(_collectionName)
+            => (await _db.Database.GetCollection<Entity>(CollectionName)
             .FindAsync(e => predicate(e))).ToList().AsQueryable();
 
         public async Task<Entity> Add(Entity entity)
         {
             await Task.Run(() => { });
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .InsertOne(entity);
 
             return entity;
@@ -41,7 +43,7 @@ namespace CeremonicBackend.Repositories
         {
             await Task.Run(() => { });
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .ReplaceOne(e => e.UserId.Equals(entity.UserId), entity);
 
             return entity;
@@ -51,7 +53,7 @@ namespace CeremonicBackend.Repositories
         {
             Entity entity = await GetById(userId);
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .DeleteOne(e => e.UserId.Equals(userId));
 
             return entity;
