@@ -79,6 +79,7 @@ namespace CeremonicBackend
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWeddingService, WeddingService>();
 
             services.AddScoped<EmailAccountService>();
             services.AddScoped<GoogleAccountService>();

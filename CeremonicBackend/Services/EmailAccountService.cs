@@ -16,7 +16,11 @@ namespace CeremonicBackend.Services
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public EmailAccountService(IUnitOfWork uow) : base(uow) { }
+        protected IUserService _userService { get; set; }
+        public EmailAccountService(IUnitOfWork uow, IUserService userService) : base(uow)
+        {
+            _userService = userService;
+        }
 
         public override async Task ValidateInputOrThrowExeption()
         {
@@ -45,13 +49,18 @@ namespace CeremonicBackend.Services
             {
                 throw new NotFoundAppException($"uncorrect password");
             }
+
+            UserAdditionalInfo = new
+            {
+                Role = await _userService.GetRoleByEmail(Email),
+            };
         }
 
         public override JwtApiModel GenerateJwt()
         {
             ClaimsIdentity claims = GetIdentity(new {
                 Email,
-                Role = ReturnedValueFromUserCreatorService.Role,
+                UserAdditionalInfo.Role,
             });
             string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
 

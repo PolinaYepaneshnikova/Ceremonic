@@ -1,12 +1,6 @@
-﻿using System.Threading.Tasks;
-
-using CeremonicBackend.DB.Mongo;
-using CeremonicBackend.DB.Relational;
+﻿using CeremonicBackend.DB.Mongo;
 
 namespace CeremonicBackend.Repositories.Interfaces
 {
-    public interface IWeddingRepository : IBaseRepository<WeddingEntity, int>
-    {
-        Task<WeddingEntity> CreateForUser(UserEntity user);
-    }
+    public interface IWeddingRepository : IBaseRepository<WeddingEntity, int> { }
 }

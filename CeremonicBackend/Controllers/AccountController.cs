@@ -12,6 +12,7 @@ using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
 using CeremonicBackend.Services;
 using CeremonicBackend.Mappings;
+using System.Security.Claims;
 
 namespace CeremonicBackend.Controllers
 {
@@ -37,13 +38,6 @@ namespace CeremonicBackend.Controllers
             _clientCreatorService = clientCreatorService;
         }
 
-        /*{
-          "firstName": "Павло",
-          "lastName": "Дунайський",
-          "email": "PavloDunayskyy@net.ua,
-          "password": "1234"
-        }*/
-
         [HttpPost]
         [Route("login")]
         public async Task<ActionResult<JwtApiModel>> EmailLogin([FromBody] LoginApiModel model)
@@ -52,6 +46,7 @@ namespace CeremonicBackend.Controllers
             _emailAccountService.Password = model.Password;
 
             _accountService = _emailAccountService;
+            _accountService.UserCreatorService = _clientCreatorService;
 
             return await Login();
         }
@@ -78,6 +73,7 @@ namespace CeremonicBackend.Controllers
             _googleAccountService.TokenId = model.TokenId;
 
             _accountService = _googleAccountService;
+            _accountService.UserCreatorService = _clientCreatorService;
 
             return await Login();
         }
@@ -105,9 +101,9 @@ namespace CeremonicBackend.Controllers
         {
             try
             {
-                string userEmail = User.Claims.ToList().Find(claim => claim.Type == "Email").Value;
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
 
-                return await _userService.GetUserByEmail(userEmail);
+                return await _userService.GetByEmail(userEmail);
             }
             catch (NotFoundAppException)
             {

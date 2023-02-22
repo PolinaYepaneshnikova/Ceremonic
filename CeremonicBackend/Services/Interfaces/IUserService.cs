@@ -6,6 +6,7 @@ namespace CeremonicBackend.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<UserApiModel> GetUserByEmail(string email);
+        Task<UserApiModel> GetByEmail(string email);
+        Task<string> GetRoleByEmail(string email);
     }
 }

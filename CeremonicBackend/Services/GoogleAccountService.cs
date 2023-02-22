@@ -7,7 +7,6 @@ using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 using CeremonicBackend.Authentification;
 using CeremonicBackend.DB.Relational;
-using CeremonicBackend.Exceptions;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
@@ -19,7 +18,11 @@ namespace CeremonicBackend.Services
         public string TokenId { get; set; }
         protected Payload Payload { get; set; }
 
-        public GoogleAccountService(IUnitOfWork uow) : base(uow) { }
+        protected IUserService _userService { get; set; }
+        public GoogleAccountService(IUnitOfWork uow, IUserService userService) : base(uow)
+        {
+            _userService = userService;
+        }
 
         public override async Task ValidateInputOrThrowExeption()
         {
@@ -47,14 +50,21 @@ namespace CeremonicBackend.Services
         }
 
         public override async Task AuthenticateUserOrThrowExeption()
-            => await Task.Run(() => { });
+        {
+            await Task.Run(() => { });
+
+            UserAdditionalInfo = new
+            {
+                Role = await _userService.GetRoleByEmail(Payload.Email),
+            };
+        }
 
         public override JwtApiModel GenerateJwt()
         {
             ClaimsIdentity claims = GetIdentity(new
             {
                 Payload.Email,
-                ReturnedValueFromUserCreatorService.Role,
+                UserAdditionalInfo.Role,
             });
             string jwtString = JwtTokenizer.GetEncodedJWT(claims, AuthOptions.Lifetime);
 

@@ -17,7 +17,7 @@ namespace CeremonicBackend.Services.Interfaces
     {
         public IUserCreatorService UserCreatorService { get; set; }
 
-        protected dynamic ReturnedValueFromUserCreatorService { get; set; }
+        protected dynamic UserAdditionalInfo { get; set; }
 
         protected IUnitOfWork _UoW { get; set; }
         public AccountService(IUnitOfWork uow)
@@ -50,7 +50,7 @@ namespace CeremonicBackend.Services.Interfaces
                 throw new AlreadyExistAppException($"user already exist");
             }
 
-            ReturnedValueFromUserCreatorService = await UserCreatorService.Create();
+            UserAdditionalInfo = await UserCreatorService.Create();
 
             return GenerateJwt();
         }
@@ -85,7 +85,7 @@ namespace CeremonicBackend.Services.Interfaces
 
             var claims = new List<Claim>
             {
-                new Claim("Email", email),
+                new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                 new Claim(
                     JwtRegisteredClaimNames.Sub,

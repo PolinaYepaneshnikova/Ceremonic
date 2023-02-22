@@ -2,12 +2,17 @@
 
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Repositories.Interfaces;
+using CeremonicBackend.Services.Interfaces;
 
 namespace CeremonicBackend.Services
 {
     public class ClientCreatorService : UserCreatorService
     {
-        public ClientCreatorService(IUnitOfWork uow) : base(uow) { }
+        protected IWeddingService _weddingService { get; set; }
+        public ClientCreatorService(IUnitOfWork uow, IWeddingService weddingService) : base(uow)
+        {
+            _weddingService = weddingService;
+        }
 
         public override async Task<dynamic> Create()
         {
@@ -25,7 +30,7 @@ namespace CeremonicBackend.Services
         {
             return new
             {
-                Wedding = await _UoW.WeddingRepository.CreateForUser(user),
+                Wedding = await _weddingService.CreateForUser(user),
             };
         }
     }
