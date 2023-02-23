@@ -12,6 +12,11 @@ namespace CeremonicBackend.DB.Mongo
             get => Database.GetCollection<WeddingEntity>("weddings");
         }
 
+        public IMongoCollection<ServiceEntity> Services
+        {
+            get => Database.GetCollection<ServiceEntity>("services");
+        }
+
         public CeremonicMongoDbContext(string connectionString, string databaseName)
         {
             _connectionString = connectionString;
@@ -22,6 +27,10 @@ namespace CeremonicBackend.DB.Mongo
         {
             await Weddings.Indexes
                 .CreateOneAsync(new CreateIndexModel<WeddingEntity>(Builders<WeddingEntity>.IndexKeys.Ascending(_ => _.UserId)))
+                .ConfigureAwait(false);
+
+            await Services.Indexes
+                .CreateOneAsync(new CreateIndexModel<ServiceEntity>(Builders<ServiceEntity>.IndexKeys.Ascending(_ => _.Id)))
                 .ConfigureAwait(false);
         }
     }
