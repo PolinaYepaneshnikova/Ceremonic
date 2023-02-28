@@ -9,7 +9,7 @@ namespace CeremonicBackend.Services
 {
     public abstract class UserCreatorService : IUserCreatorService
     {
-        public RegistrationApiModel Model { get; set; }
+        public RegistrationApiModel RegistrationModel { get; set; }
 
         protected IUnitOfWork _UoW { get; set; }
         public UserCreatorService(IUnitOfWork uow)
@@ -23,12 +23,12 @@ namespace CeremonicBackend.Services
         {
             UserEntity user = new UserEntity()
             {
-                FirstName = Model.FirstName,
-                LastName = Model.LastName,
+                FirstName = RegistrationModel.FirstName,
+                LastName = RegistrationModel.LastName,
                 LoginInfo = new UserLoginInfoEntity()
                 {
-                    Email = Model.Email,
-                    PasswordHash = AccountService.HashPassword(Model.Password),
+                    Email = RegistrationModel.Email,
+                    PasswordHash = AccountService.HashPassword(RegistrationModel.Password),
                 },
             };
             user = await _UoW.UserRepository.Add(user);

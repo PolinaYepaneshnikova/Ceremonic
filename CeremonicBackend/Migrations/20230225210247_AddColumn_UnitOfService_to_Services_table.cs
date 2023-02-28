@@ -2,7 +2,7 @@
 
 namespace CeremonicBackend.Migrations
 {
-    public partial class AddColumn_UnitOfService_to_Services_table : Migration
+    public partial class addColumn_UnitOfService_to_Services_table : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

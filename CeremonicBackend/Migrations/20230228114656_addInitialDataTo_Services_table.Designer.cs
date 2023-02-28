@@ -2,14 +2,16 @@
 using CeremonicBackend.DB.Relational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CeremonicBackend.Migrations
 {
     [DbContext(typeof(CeremonicRelationalDbContext))]
-    partial class CeremonicRelationalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230228114656_addInitialDataTo_Services_table")]
+    partial class addInitialDataTo_Services_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

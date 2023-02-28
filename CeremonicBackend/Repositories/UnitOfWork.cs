@@ -11,8 +11,12 @@ namespace CeremonicBackend.Repositories
         protected CeremonicRelationalDbContext _relationalDb { get; set; }
         protected ICeremonicMongoDbContext _mongoDb { get; set; }
 
-        public IUserRepository UserRepository { get; set; }
-        public IWeddingRepository WeddingRepository { get; set; }
+        public IUserRepository UserRepository { get; protected set; }
+
+        public IServiceRepository ServiceRepository { get; protected set; }
+
+        public IWeddingRepository WeddingRepository { get; protected set; }
+        public IProviderRepository ProviderRepository { get; protected set; }
 
         public UnitOfWork(CeremonicRelationalDbContext relationalDb, ICeremonicMongoDbContext mongoDb)
         {
@@ -21,7 +25,10 @@ namespace CeremonicBackend.Repositories
 
             UserRepository = new UserRepository(relationalDb);
 
+            ServiceRepository = new ServiceRepository(relationalDb, mongoDb);
+
             WeddingRepository = new WeddingRepository(mongoDb);
+            ProviderRepository = new ProviderRepository(mongoDb);
         }
 
         public async Task<int> SaveChanges() => await _relationalDb.SaveChangesAsync();

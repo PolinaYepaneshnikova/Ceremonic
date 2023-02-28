@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using CeremonicBackend.DB.Mongo;
+﻿using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.Repositories.Interfaces;
-using CeremonicBackend.DB.Relational;
 
 namespace CeremonicBackend.Repositories
 {

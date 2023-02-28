@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Mappings;
 using CeremonicBackend.Repositories.Interfaces;
@@ -30,7 +30,12 @@ namespace CeremonicBackend.Services
                 return "User";
             }
 
-            return "Provider";
+            if (await _UoW.ProviderRepository.GetById(user.Id) is ProviderEntity provider)
+            {
+                return (await _UoW.ServiceRepository.GetById(provider.ServiceId)).RelationalServiceEntity.Name;
+            }
+
+            return "undefined";
         }
     }
 }

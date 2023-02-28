@@ -5,7 +5,7 @@ namespace CeremonicBackend.Services.Interfaces
 {
     public interface IUserCreatorService
     {
-        RegistrationApiModel Model { get; set; }
+        RegistrationApiModel RegistrationModel { get; set; }
 
         Task<dynamic> Create();
     }

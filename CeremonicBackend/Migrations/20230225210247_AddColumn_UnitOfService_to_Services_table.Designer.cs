@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CeremonicBackend.Migrations
 {
     [DbContext(typeof(CeremonicRelationalDbContext))]
-    [Migration("20230225210247_AddColumn_UnitOfService_to_Services_table")]
-    partial class AddColumn_UnitOfService_to_Services_table
+    [Migration("20230225210247_addColumn_UnitOfService_to_Services_table")]
+    partial class addColumn_UnitOfService_to_Services_table
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

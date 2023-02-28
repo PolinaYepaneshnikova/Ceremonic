@@ -42,7 +42,7 @@ namespace CeremonicBackend.Services
                     new GoogleJsonWebSignature.ValidationSettings()
                 );
 
-            UserCreatorService.Model.Email = Payload.Email;
+            UserCreatorService.RegistrationModel.Email = Payload.Email;
 
             UserEntity user = await _UoW.UserRepository.GetByEmail(Payload.Email);
 

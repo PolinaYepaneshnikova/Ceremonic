@@ -15,7 +15,7 @@ namespace CeremonicBackend.Repositories
         public UserRepository(CeremonicRelationalDbContext db) : base(db) { }
 
         public async Task<UserEntity> GetByEmail(string email)
-            => await Task.Run(() =>_db.Users.Include(e => e.LoginInfo)
+            => await Task.Run(() => _db.Users.Include(e => e.LoginInfo)
             .Where(e => e.LoginInfo.Email == email).FirstOrDefault());
 
         public async Task<string> GetHashPasswordById(int id)

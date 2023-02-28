@@ -8,6 +8,8 @@ namespace CeremonicBackend.DB.Mongo
 
         public IMongoCollection<WeddingEntity> Weddings { get; }
 
+        public IMongoCollection<ServiceEntity> Services { get; }
+
         public void CreateIndexes();
     }
 }

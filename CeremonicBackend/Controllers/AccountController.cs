@@ -60,7 +60,7 @@ namespace CeremonicBackend.Controllers
 
             _accountService = _emailAccountService;
 
-            _clientCreatorService.Model = model;
+            _clientCreatorService.RegistrationModel = model;
             _accountService.UserCreatorService = _clientCreatorService;
 
             return await Registration();
@@ -86,7 +86,7 @@ namespace CeremonicBackend.Controllers
 
             _accountService = _googleAccountService;
 
-            _clientCreatorService.Model = model.ToRegistrationApiModel();
+            _clientCreatorService.RegistrationModel = model.ToRegistrationApiModel();
             _accountService.UserCreatorService = _clientCreatorService;
 
             return await Registration();
