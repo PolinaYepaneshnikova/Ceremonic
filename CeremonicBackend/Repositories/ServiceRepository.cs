@@ -30,6 +30,7 @@ namespace CeremonicBackend.Repositories
         {
             GeneralServiceEntity generalEntity = new GeneralServiceEntity();
 
+            generalEntity.Id = entity.Id;
             generalEntity.RelationalServiceEntity = await _relationalRepository.Add(entity.RelationalServiceEntity);
             generalEntity.MongoServiceEntity = await _mongoRepository.Add(entity.MongoServiceEntity);
 
@@ -40,6 +41,7 @@ namespace CeremonicBackend.Repositories
         {
             GeneralServiceEntity generalEntity = new GeneralServiceEntity();
 
+            generalEntity.Id = id;
             generalEntity.RelationalServiceEntity = await _relationalRepository.Delete(id);
             generalEntity.MongoServiceEntity = await _mongoRepository.Delete(id);
 
@@ -50,6 +52,7 @@ namespace CeremonicBackend.Repositories
         {
             GeneralServiceEntity generalEntity = new GeneralServiceEntity();
 
+            generalEntity.Id = id;
             generalEntity.RelationalServiceEntity = await _relationalRepository.GetById(id);
             generalEntity.MongoServiceEntity = await _mongoRepository.GetById(id);
 
@@ -75,6 +78,7 @@ namespace CeremonicBackend.Repositories
         {
             GeneralServiceEntity generalEntity = new GeneralServiceEntity();
 
+            generalEntity.Id = entity.Id;
             generalEntity.RelationalServiceEntity = await _relationalRepository.Update(entity.RelationalServiceEntity);
             generalEntity.MongoServiceEntity = await _mongoRepository.Update(entity.MongoServiceEntity);
 
