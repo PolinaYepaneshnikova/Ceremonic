@@ -73,6 +73,8 @@ namespace CeremonicBackend.Controllers
             _googleAccountService.TokenId = model.TokenId;
 
             _accountService = _googleAccountService;
+
+            _clientCreatorService.RegistrationModel = new RegistrationApiModel();
             _accountService.UserCreatorService = _clientCreatorService;
 
             return await Login();
