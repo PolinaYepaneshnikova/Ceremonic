@@ -30,7 +30,6 @@
   <ItemGroup>
     <Folder Include="AppData\" />
     <Folder Include="DTOs\" />
-    <Folder Include="FileStorage\Avatars\" />
     <Folder Include="FileStorage\Files\" />
     <Folder Include="FileStorage\Images\" />
     <Folder Include="Quartz\" />
