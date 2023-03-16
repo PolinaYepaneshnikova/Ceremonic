@@ -41,7 +41,7 @@ namespace CeremonicBackend.Services
             });
         }
 
-        public async Task<ProviderEntity> Edit(EditProviderApiModel model)
+        public async Task<ProviderEntity> Edit(ProviderEditApiModel model)
         {
             ProviderEntity provider = await _UoW.ProviderRepository.GetById(model.UserId);
 

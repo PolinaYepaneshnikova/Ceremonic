@@ -2,7 +2,7 @@
 
 namespace CeremonicBackend.WebApiModels
 {
-    public class EditProviderApiModel
+    public class ProviderEditApiModel
     {
         public int UserId { get; set; }
         public string Info { get; set; }
