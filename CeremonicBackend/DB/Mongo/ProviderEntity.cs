@@ -8,6 +8,7 @@ namespace CeremonicBackend.DB.Mongo
         public string BrandName { get; set; }
         public string AvatarFileName { get; set; }
         public List<string> ImageFileNames { get; set; }
+        public string Info { get; set; }
         public string PlaceName { get; set; }
         public string Geolocation { get; set; }
         public string City { get; set; }

@@ -19,15 +19,18 @@ namespace CeremonicBackend.Controllers
         EmailAccountService _emailAccountService { get; set; }
         GoogleAccountService _googleAccountService { get; set; }
         ProviderCreatorService _providerCreatorService { get; set; }
+        IProviderService _providerService { get; set; }
         public ProviderAccountController(
             EmailAccountService emailAccountService,
             GoogleAccountService googleAccountService,
-            ProviderCreatorService providerCreatorService
+            ProviderCreatorService providerCreatorService,
+            IProviderService providerService
         )
         {
             _emailAccountService = emailAccountService;
             _googleAccountService = googleAccountService;
             _providerCreatorService = providerCreatorService;
+            _providerService = providerService;
         }
 
         [HttpPost]
@@ -86,5 +89,18 @@ namespace CeremonicBackend.Controllers
                 });
             }
         }
+
+
+
+
+
+        [HttpPost]
+        [Route("edit")]
+        public async Task<IActionResult> Edit(EditProviderApiModel model)
+        {
+            await _providerService.Edit(model);
+
+            return Ok();
+        } 
     }
 }

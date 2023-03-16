@@ -9,5 +9,6 @@ namespace CeremonicBackend.Services.Interfaces
     public interface IProviderService
     {
         Task<ProviderEntity> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo);
+        Task<ProviderEntity> Edit(EditProviderApiModel model);
     }
 }
