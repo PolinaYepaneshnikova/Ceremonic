@@ -11,19 +11,25 @@ namespace CeremonicBackend.Repositories
 {
     public class ServiceRepository : IServiceRepository
     {
-        protected CeremonicRelationalDbContext _relationalDb { get; set; }
-        protected ICeremonicMongoDbContext _mongoDb { get; set; }
+        protected CeremonicRelationalDbContext _relationalDb;
+        protected ICeremonicMongoDbContext _mongoDb;
+        protected IUnitOfWork _UoW;
 
         protected IBaseRepository<DB.Relational.ServiceEntity, int> _relationalRepository { get; set; }
         protected IBaseRepository<DB.Mongo.ServiceEntity, int> _mongoRepository { get; set; }
 
-        public ServiceRepository(CeremonicRelationalDbContext relationalDb, ICeremonicMongoDbContext mongoDb)
+        public ServiceRepository(
+            CeremonicRelationalDbContext relationalDb, 
+            ICeremonicMongoDbContext mongoDb, 
+            IUnitOfWork uow
+        )
         {
             _relationalDb = relationalDb;
             _mongoDb = mongoDb;
+            _UoW = uow;
 
-            _relationalRepository = new BaseRelationalRepository<DB.Relational.ServiceEntity, int>(_relationalDb);
-            _mongoRepository = new BaseMongoRepositoryWithIdKey<DB.Mongo.ServiceEntity, int>(_mongoDb, "services");
+            _relationalRepository = new BaseRelationalRepository<DB.Relational.ServiceEntity, int>(_relationalDb, uow);
+            _mongoRepository = new BaseMongoRepositoryWithIdKey<DB.Mongo.ServiceEntity, int>(_mongoDb, uow, "services");
         }
 
         public async Task<GeneralServiceEntity> Add(GeneralServiceEntity entity)

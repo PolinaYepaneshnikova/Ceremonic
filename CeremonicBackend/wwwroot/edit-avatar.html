@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Выберите файл и загрузите его на сервер</title>
+</head>
+<body>
+    <input type="text" id="jwt-input" />
+    <input type="file" id="file-input" style="display: none" />
+    <button id="upload-btn">Загрузить файл</button>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const jwtInput = document.querySelector('#jwt-input');
+            const fileInput = document.querySelector('#file-input');
+            const uploadBtn = document.querySelector('#upload-btn');
+
+            // Открываем окно выбора файла при клике на кнопку
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Отправляем выбранный файл на сервер при его выборе
+            fileInput.addEventListener('change', () => {
+                const jwtString = jwtInput.value;
+                const file = fileInput.files[0];
+
+                const formData = new FormData();
+                formData.append("Content-Type", "multipart/form-data");
+                formData.append('avatarFile', file);
+
+                fetch('/api/ProviderAccount/editAvatar', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${jwtString}`,
+                    },
+                    body: formData,
+                })
+                    .then(response => response.text())
+                    .then(data => console.log(data))
+                    .catch(error => console.error(error));
+            });
+        });
+    </script>
+</body>
+</html>

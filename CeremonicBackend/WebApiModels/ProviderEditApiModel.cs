@@ -4,7 +4,6 @@ namespace CeremonicBackend.WebApiModels
 {
     public class ProviderEditApiModel
     {
-        public int UserId { get; set; }
         public string Info { get; set; }
         public string Geolocation { get; set; }
         public string City { get; set; }

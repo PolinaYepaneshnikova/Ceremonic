@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+using System;
 using System.Threading.Tasks;
 
 using CeremonicBackend.DB.Mongo;
@@ -16,6 +20,10 @@ namespace CeremonicBackend.Services
         public ProviderService(IUnitOfWork uow)
         {
             _UoW = uow;
+        }
+        public void SetFileRepository(ControllerBase controller, IWebHostEnvironment env)
+        {
+            _UoW.SetFileRepository(controller, env);
         }
 
 
@@ -41,29 +49,40 @@ namespace CeremonicBackend.Services
             });
         }
 
-        public async Task<ProviderEntity> Edit(ProviderEditApiModel model)
+        public async Task<ProviderEntity> Edit(string email, ProviderEditApiModel model)
         {
-            ProviderEntity provider = await _UoW.ProviderRepository.GetById(model.UserId);
+            ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
 
             if (provider is null)
             {
                 throw new NotFoundAppException($"provider not found");
             }
 
-            return await _UoW.ProviderRepository.Update(new ProviderEntity()
+            provider.Info = model.Info;
+            provider.Geolocation = model.Geolocation;
+            provider.City = model.City;
+            provider.AveragePrice = model.AveragePrice;
+
+            return await _UoW.ProviderRepository.Update(provider);
+        }
+
+        public async Task<ProviderEntity> EditAvatar(string email, IFormFile avatarFile)
+        {
+            ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
+
+            if (provider is null)
             {
-                UserId = model.UserId,
-                ServiceId = provider.ServiceId,
-                BrandName = provider.BrandName,
-                AvatarFileName = provider.AvatarFileName,
-                ImageFileNames = provider.ImageFileNames,
-                Info = model.Info,
-                PlaceName = provider.PlaceName,
-                Geolocation = model.Geolocation,
-                City = model.City,
-                AveragePrice = model.AveragePrice,
-                WorkingDayList = provider.WorkingDayList,
-            });
+                throw new NotFoundAppException($"provider not found");
+            }
+
+            string filename = await _UoW.FileRepository.Add("Avatars", avatarFile);
+            if (!string.IsNullOrEmpty(provider.AvatarFileName))
+            {
+                await _UoW.FileRepository.Delete("Avatars", provider.AvatarFileName);
+            }
+            provider.AvatarFileName = filename;
+
+            return await _UoW.ProviderRepository.Update(provider);
         }
     }
 }

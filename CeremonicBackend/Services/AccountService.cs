@@ -95,7 +95,7 @@ namespace CeremonicBackend.Services.Interfaces
             };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token",
-                "Email",
+                ClaimTypes.Email,
                 ClaimsIdentity.DefaultRoleClaimType);
 
             return claimsIdentity;

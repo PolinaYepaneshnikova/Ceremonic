@@ -13,11 +13,14 @@ namespace CeremonicBackend.Repositories
     public class BaseMongoRepositoryWithIdKey<Entity, IdType> : IBaseRepository<Entity, IdType> where Entity : BaseEntity<IdType>
     {
         protected ICeremonicMongoDbContext _db;
+        protected IUnitOfWork _UoW;
 
         public string CollectionName;
-        public BaseMongoRepositoryWithIdKey(ICeremonicMongoDbContext db, string collectionName)
+        public BaseMongoRepositoryWithIdKey(ICeremonicMongoDbContext db, IUnitOfWork uow, string collectionName)
         {
             _db = db;
+            _UoW = uow;
+
             CollectionName = collectionName;
         }
 

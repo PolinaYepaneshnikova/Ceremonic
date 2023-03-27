@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+
+using System.Threading.Tasks;
 
 namespace CeremonicBackend.Repositories.Interfaces
 {
@@ -10,6 +13,9 @@ namespace CeremonicBackend.Repositories.Interfaces
 
         IWeddingRepository WeddingRepository { get; }
         IProviderRepository ProviderRepository { get; }
+
+        IFileRepository FileRepository { get; }
+        void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);
 
         Task<int> SaveChanges();
     }

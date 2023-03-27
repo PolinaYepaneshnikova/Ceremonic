@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System;
 
@@ -24,13 +28,16 @@ namespace CeremonicBackend.Controllers
             EmailAccountService emailAccountService,
             GoogleAccountService googleAccountService,
             ProviderCreatorService providerCreatorService,
-            IProviderService providerService
+            IProviderService providerService,
+            IWebHostEnvironment env
         )
         {
             _emailAccountService = emailAccountService;
             _googleAccountService = googleAccountService;
             _providerCreatorService = providerCreatorService;
             _providerService = providerService;
+
+            _providerService.SetFileRepository(this, env);
         }
 
         [HttpPost]
@@ -94,13 +101,48 @@ namespace CeremonicBackend.Controllers
 
 
 
+        [Authorize]
         [HttpPut]
         [Route("edit")]
         public async Task<IActionResult> Edit(ProviderEditApiModel model)
         {
-            await _providerService.Edit(model);
+            try
+            {
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
 
-            return Ok();
-        } 
+                await _providerService.Edit(userEmail, model);
+
+                return Ok();
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPut]
+        [Route("editAvatar")]
+        public async Task<IActionResult> EditAvatar([FromForm] EditAvatarApiModel model)
+        {
+            try
+            {
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+
+                await _providerService.EditAvatar(userEmail, model.AvatarFile);
+
+                return Ok();
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
     }
 }

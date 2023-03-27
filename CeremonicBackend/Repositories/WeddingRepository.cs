@@ -7,6 +7,6 @@ namespace CeremonicBackend.Repositories
     {
         public const string ConstCollectionName = "weddings";
 
-        public WeddingRepository(ICeremonicMongoDbContext db) : base(db, ConstCollectionName) { }
+        public WeddingRepository(ICeremonicMongoDbContext db, IUnitOfWork uow) : base(db, uow, ConstCollectionName) { }
     }
 }
