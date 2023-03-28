@@ -104,7 +104,7 @@ namespace CeremonicBackend.Controllers
         [Authorize]
         [HttpPut]
         [Route("edit")]
-        public async Task<IActionResult> Edit(ProviderEditApiModel model)
+        public async Task<IActionResult> Edit([FromForm] ProviderEditApiModel model)
         {
             try
             {

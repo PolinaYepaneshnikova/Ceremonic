@@ -63,6 +63,29 @@ namespace CeremonicBackend.Services
             provider.City = model.City;
             provider.AveragePrice = model.AveragePrice;
 
+            if (model.AddedImageFiles is not null)
+            {
+                foreach (IFormFile imageFile in model.AddedImageFiles)
+                {
+                    if (imageFile is not null)
+                    {
+                        provider.ImageFileNames.Add(await _UoW.FileRepository.Add("Images", imageFile));
+                    }
+                }
+            }
+
+            if (model.DeletedImageNames is not null)
+            {
+                foreach (string imageName in model.DeletedImageNames)
+                {
+                    if (!string.IsNullOrEmpty(imageName))
+                    {
+                        await _UoW.FileRepository.Delete("Images", imageName);
+                    }
+                    provider.ImageFileNames.Remove(imageName);
+                }
+            }
+
             return await _UoW.ProviderRepository.Update(provider);
         }
 
