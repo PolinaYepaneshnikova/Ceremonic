@@ -17,7 +17,7 @@ namespace CeremonicBackend.Services.Interfaces
         Task<ProviderApiModel> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo);
         Task<ProviderApiModel> Get(int userId);
         Task<ProviderApiModel> Get(string email);
-        Task<ProviderApiModel> Edit(string email, ProviderEditApiModel model);
+        Task<ProviderApiModel> Edit(string email, EditProviderApiModel model);
         Task<ProviderApiModel> EditAvatar(string email, IFormFile avatarFile);
     }
 }

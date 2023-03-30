@@ -76,7 +76,7 @@ namespace CeremonicBackend.Services
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
 
-        public async Task<ProviderApiModel> Edit(string email, ProviderEditApiModel model)
+        public async Task<ProviderApiModel> Edit(string email, EditProviderApiModel model)
         {
             ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
 

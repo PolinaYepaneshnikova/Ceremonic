@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
+using CeremonicBackend.Mappings;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
-using Newtonsoft.Json;
 
 namespace CeremonicBackend.Services
 {
@@ -25,11 +25,11 @@ namespace CeremonicBackend.Services
 
             await CreateUserMongoCollections(user);
 
-            ProviderEntity provider = await _UoW.ProviderRepository.GetById(user.Id);
+            ProviderApiModel provider = await _providerService.Get(user.Id);
 
             return new
             {
-                Role = (await _UoW.ServiceRepository.GetById(provider.ServiceId)).RelationalServiceEntity.Name,
+                Role = provider.ServiceName,
             };
         }
 

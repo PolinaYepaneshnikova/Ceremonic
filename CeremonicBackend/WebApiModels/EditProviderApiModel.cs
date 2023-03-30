@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CeremonicBackend.WebApiModels
 {
-    public class ProviderEditApiModel
+    public class EditProviderApiModel
     {
         public string Info { get; set; }
         public string Geolocation { get; set; }
