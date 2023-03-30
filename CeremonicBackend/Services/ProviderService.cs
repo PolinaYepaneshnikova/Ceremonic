@@ -11,6 +11,7 @@ using CeremonicBackend.Exceptions;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
+using CeremonicBackend.Mappings;
 
 namespace CeremonicBackend.Services
 {
@@ -28,9 +29,9 @@ namespace CeremonicBackend.Services
 
 
 
-        public async Task<ProviderEntity> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo)
+        public async Task<ProviderApiModel> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo)
         {
-            return await _UoW.ProviderRepository.Add(new ProviderEntity()
+            ProviderEntity provider = await _UoW.ProviderRepository.Add(new ProviderEntity()
             {
                 UserId= user.Id,
                 ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
@@ -47,9 +48,35 @@ namespace CeremonicBackend.Services
                 },
                 WorkingDayList = null,
             });
+
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
 
-        public async Task<ProviderEntity> Edit(string email, ProviderEditApiModel model)
+        public async Task<ProviderApiModel> Get(int userId)
+        {
+            ProviderEntity provider = await _UoW.ProviderRepository.GetById(userId);
+
+            if (provider is null)
+            {
+                throw new NotFoundAppException($"provider not found");
+            }
+
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+        }
+
+        public async Task<ProviderApiModel> Get(string email)
+        {
+            ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
+
+            if (provider is null)
+            {
+                throw new NotFoundAppException($"provider not found");
+            }
+
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+        }
+
+        public async Task<ProviderApiModel> Edit(string email, ProviderEditApiModel model)
         {
             ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
 
@@ -86,10 +113,12 @@ namespace CeremonicBackend.Services
                 }
             }
 
-            return await _UoW.ProviderRepository.Update(provider);
+            await _UoW.ProviderRepository.Update(provider);
+
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
 
-        public async Task<ProviderEntity> EditAvatar(string email, IFormFile avatarFile)
+        public async Task<ProviderApiModel> EditAvatar(string email, IFormFile avatarFile)
         {
             ProviderEntity provider = await _UoW.ProviderRepository.GetByEmail(email);
 
@@ -105,7 +134,9 @@ namespace CeremonicBackend.Services
             }
             provider.AvatarFileName = filename;
 
-            return await _UoW.ProviderRepository.Update(provider);
+            await _UoW.ProviderRepository.Update(provider);
+
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
     }
 }

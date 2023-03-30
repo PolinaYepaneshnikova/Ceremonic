@@ -105,7 +105,7 @@ namespace CeremonicBackend.Controllers
             {
                 string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
 
-                return await _userService.GetByEmail(userEmail);
+                return await _userService.Get(userEmail);
             }
             catch (NotFoundAppException)
             {

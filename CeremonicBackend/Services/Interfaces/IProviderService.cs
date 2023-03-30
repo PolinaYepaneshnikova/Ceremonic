@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using System.Threading.Tasks;
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.WebApiModels;
-using Microsoft.AspNetCore.Http;
 
 namespace CeremonicBackend.Services.Interfaces
 {
@@ -14,8 +14,10 @@ namespace CeremonicBackend.Services.Interfaces
     {
         void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);
 
-        Task<ProviderEntity> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo);
-        Task<ProviderEntity> Edit(string email, ProviderEditApiModel model);
-        Task<ProviderEntity> EditAvatar(string email, IFormFile avatarFile);
+        Task<ProviderApiModel> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo);
+        Task<ProviderApiModel> Get(int userId);
+        Task<ProviderApiModel> Get(string email);
+        Task<ProviderApiModel> Edit(string email, ProviderEditApiModel model);
+        Task<ProviderApiModel> EditAvatar(string email, IFormFile avatarFile);
     }
 }

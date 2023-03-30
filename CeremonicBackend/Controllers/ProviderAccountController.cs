@@ -144,5 +144,34 @@ namespace CeremonicBackend.Controllers
                 });
             }
         }
+
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("currentProvider")]
+        public async Task<ActionResult<ProviderApiModel>> CurrentProvider()
+        {
+            try
+            {
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+
+                return await _providerService.Get(userEmail);
+            }
+            catch (NotFoundAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "Provider not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.Message
+                });
+            }
+        }
     }
 }

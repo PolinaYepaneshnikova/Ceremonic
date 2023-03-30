@@ -18,7 +18,7 @@ namespace CeremonicBackend.Services
 
 
 
-        public async Task<UserApiModel> GetByEmail(string email)
+        public async Task<UserApiModel> Get(string email)
             => (await _UoW.UserRepository.GetByEmail(email)).ToUserApiModel();
 
         public async Task<string> GetRoleByEmail(string email)
