@@ -92,7 +92,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
+                    Error = exp.Message + "\n" + exp.StackTrace
                 });
             }
         }
@@ -118,7 +118,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
+                    Error = exp.Message + "\n" + exp.StackTrace
                 });
             }
         }
@@ -140,7 +140,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
+                    Error = exp.Message + "\n" + exp.StackTrace
                 });
             }
         }
@@ -169,7 +169,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
+                    Error = exp.Message + "\n" + exp.StackTrace
                 });
             }
         }

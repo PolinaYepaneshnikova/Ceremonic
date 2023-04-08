@@ -10,6 +10,7 @@ namespace CeremonicBackend.WebApiModels
         public string Geolocation { get; set; }
         public string City { get; set; }
         public RangeEntity AveragePrice { get; set; }
+        public RangeEntity GuestCount { get; set; }
         public IList<string> DeletedImageNames { get; set; }
         public IList<IFormFile> AddedImageFiles { get; set; }
     }

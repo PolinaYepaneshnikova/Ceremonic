@@ -31,23 +31,52 @@ namespace CeremonicBackend.Services
 
         public async Task<ProviderApiModel> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo)
         {
-            ProviderEntity provider = await _UoW.ProviderRepository.Add(new ProviderEntity()
+            ProviderEntity provider;
+            if (providerInfo.ServiceName == "Банкетна зала" || providerInfo.ServiceName == "Місце проведення церемонії")
             {
-                UserId= user.Id,
-                ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
-                BrandName = providerInfo.BrandName,
-                AvatarFileName = null,
-                ImageFileNames = { },
-                PlaceName = "",
-                Geolocation = null,
-                City = "",
-                AveragePrice = new RangeEntity()
+                provider = await _UoW.ProviderRepository.Add(new PlaceProviderEntity()
                 {
-                    Min = 0,
-                    Max = 0,
-                },
-                WorkingDayList = null,
-            });
+                    UserId = user.Id,
+                    ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
+                    BrandName = providerInfo.BrandName,
+                    AvatarFileName = null,
+                    ImageFileNames = { },
+                    PlaceName = "",
+                    Geolocation = null,
+                    City = "",
+                    AveragePrice = new RangeEntity()
+                    {
+                        Min = 0,
+                        Max = 0,
+                    },
+                    GuestCount = new RangeEntity()
+                    {
+                        Min = 0,
+                        Max = 0,
+                    },
+                    WorkingDayList = null,
+                });
+            }
+            else
+            {
+                provider = await _UoW.ProviderRepository.Add(new ProviderEntity()
+                {
+                    UserId = user.Id,
+                    ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
+                    BrandName = providerInfo.BrandName,
+                    AvatarFileName = null,
+                    ImageFileNames = { },
+                    PlaceName = "",
+                    Geolocation = null,
+                    City = "",
+                    AveragePrice = new RangeEntity()
+                    {
+                        Min = 0,
+                        Max = 0,
+                    },
+                    WorkingDayList = null,
+                });
+            }
 
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
@@ -90,6 +119,11 @@ namespace CeremonicBackend.Services
             provider.City = model.City;
             provider.AveragePrice = model.AveragePrice;
 
+            if (provider is PlaceProviderEntity placeProvider)
+            {
+                placeProvider.GuestCount = model.GuestCount;
+            }
+
             if (model.AddedImageFiles is not null)
             {
                 foreach (IFormFile imageFile in model.AddedImageFiles)
@@ -108,8 +142,8 @@ namespace CeremonicBackend.Services
                     if (!string.IsNullOrEmpty(imageName))
                     {
                         await _UoW.FileRepository.Delete("Images", imageName);
+                        provider.ImageFileNames.Remove(imageName);
                     }
-                    provider.ImageFileNames.Remove(imageName);
                 }
             }
 

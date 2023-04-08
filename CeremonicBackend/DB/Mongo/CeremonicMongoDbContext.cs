@@ -55,6 +55,14 @@ namespace CeremonicBackend.DB.Mongo
                            new RangeEntity(1500, 3000),
                            new RangeEntity(3000, decimal.MaxValue),
                        },
+                       GuestCountRanges = new List<RangeEntity>()
+                       {
+                           new RangeEntity(0, 20),
+                           new RangeEntity(20, 50),
+                           new RangeEntity(50, 100),
+                           new RangeEntity(100, 150),
+                           new RangeEntity(150, decimal.MaxValue),
+                       },
                     },
                     new ServiceEntity(){
                        Id = 2,
@@ -63,6 +71,14 @@ namespace CeremonicBackend.DB.Mongo
                            new RangeEntity(0, 1500),
                            new RangeEntity(1500, 3000),
                            new RangeEntity(3000, decimal.MaxValue),
+                       },
+                       GuestCountRanges = new List<RangeEntity>()
+                       {
+                           new RangeEntity(0, 20),
+                           new RangeEntity(20, 50),
+                           new RangeEntity(50, 100),
+                           new RangeEntity(100, 150),
+                           new RangeEntity(150, decimal.MaxValue),
                        },
                     },
                     new ServiceEntity(){
