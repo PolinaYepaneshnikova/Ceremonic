@@ -9,10 +9,31 @@ namespace CeremonicBackend.Mappings
     public static class ProviderMapping
     {
         public static async Task<ProviderApiModel> ToProviderApiModel(this ProviderEntity entity, IServiceRepository serviceRepository)
-            => new ProviderApiModel()
+        {
+            string serviceName = (await serviceRepository.GetById(entity.ServiceId)).RelationalServiceEntity.Name;
+
+            if (entity is PlaceProviderEntity placeEntity)
+            {
+                return new PlaceProviderApiModel()
+                {
+                    UserId = entity.UserId,
+                    ServiceName = serviceName,
+                    BrandName = entity.BrandName,
+                    AvatarFileName = entity.AvatarFileName,
+                    ImageFileNames = entity.ImageFileNames,
+                    Info = entity.Info,
+                    PlaceName = entity.PlaceName,
+                    Geolocation = entity.Geolocation,
+                    AveragePrice = entity.AveragePrice,
+                    GuestCount = placeEntity.GuestCount,
+                    WorkingDayList = entity.WorkingDayList,
+                };
+            }
+
+            return new ProviderApiModel()
             {
                 UserId = entity.UserId,
-                ServiceName = (await serviceRepository.GetById(entity.ServiceId)).RelationalServiceEntity.Name,
+                ServiceName = serviceName,
                 BrandName = entity.BrandName,
                 AvatarFileName = entity.AvatarFileName,
                 ImageFileNames = entity.ImageFileNames,
@@ -22,5 +43,6 @@ namespace CeremonicBackend.Mappings
                 AveragePrice = entity.AveragePrice,
                 WorkingDayList = entity.WorkingDayList,
             };
+        }
     }
 }

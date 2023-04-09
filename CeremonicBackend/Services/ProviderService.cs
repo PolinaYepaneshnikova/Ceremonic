@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
@@ -40,7 +40,7 @@ namespace CeremonicBackend.Services
                     ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
                     BrandName = providerInfo.BrandName,
                     AvatarFileName = null,
-                    ImageFileNames = { },
+                    ImageFileNames = new List<string>(),
                     PlaceName = "",
                     Geolocation = null,
                     City = "",
@@ -65,7 +65,7 @@ namespace CeremonicBackend.Services
                     ServiceId = (await _UoW.ServiceRepository.GetByName(providerInfo.ServiceName)).Id,
                     BrandName = providerInfo.BrandName,
                     AvatarFileName = null,
-                    ImageFileNames = { },
+                    ImageFileNames = new List<string>(),
                     PlaceName = "",
                     Geolocation = null,
                     City = "",
@@ -118,6 +118,7 @@ namespace CeremonicBackend.Services
             provider.Geolocation = model.Geolocation;
             provider.City = model.City;
             provider.AveragePrice = model.AveragePrice;
+            provider.ImageFileNames ??= new List<string>();
 
             if (provider is PlaceProviderEntity placeProvider)
             {
