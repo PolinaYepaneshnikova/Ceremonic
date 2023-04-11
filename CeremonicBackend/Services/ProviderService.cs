@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -172,6 +173,13 @@ namespace CeremonicBackend.Services
             await _UoW.ProviderRepository.Update(provider);
 
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+        }
+
+        public async Task<List<ProviderApiModel>> Search(SearchProviderApiModel model)
+        {
+            return (await _UoW.ProviderRepository.Search(model))
+                .Select(async e => await e.ToProviderApiModel(_UoW.ServiceRepository))
+                .Select(t => t.Result).ToList();
         }
     }
 }

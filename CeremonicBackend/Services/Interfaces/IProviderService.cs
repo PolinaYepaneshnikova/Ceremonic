@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
-using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.WebApiModels;
 
@@ -19,5 +19,6 @@ namespace CeremonicBackend.Services.Interfaces
         Task<ProviderApiModel> Get(string email);
         Task<ProviderApiModel> Edit(string email, EditProviderApiModel model);
         Task<ProviderApiModel> EditAvatar(string email, IFormFile avatarFile);
+        Task<List<ProviderApiModel>> Search(SearchProviderApiModel model);
     }
 }

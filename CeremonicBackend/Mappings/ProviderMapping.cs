@@ -24,6 +24,7 @@ namespace CeremonicBackend.Mappings
                     Info = entity.Info,
                     PlaceName = entity.PlaceName,
                     Geolocation = entity.Geolocation,
+                    City = entity.City,
                     AveragePrice = entity.AveragePrice,
                     GuestCount = placeEntity.GuestCount,
                     WorkingDayList = entity.WorkingDayList,
@@ -40,6 +41,7 @@ namespace CeremonicBackend.Mappings
                 Info = entity.Info,
                 PlaceName = entity.PlaceName,
                 Geolocation = entity.Geolocation,
+                City = entity.City,
                 AveragePrice = entity.AveragePrice,
                 WorkingDayList = entity.WorkingDayList,
             };
