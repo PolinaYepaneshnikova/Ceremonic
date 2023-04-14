@@ -168,6 +168,10 @@ namespace CeremonicBackend.Repositories
             }
 
             Func<ProviderEntity, decimal> comparing = null;
+            if (string.IsNullOrEmpty(model.orderBy))
+            {
+                model.orderBy = OrderProvidersBy.None;
+            }
             if (model.orderBy == OrderProvidersBy.ByPriceAsc)
             {
                 comparing = p => p.AveragePrice.Min;
