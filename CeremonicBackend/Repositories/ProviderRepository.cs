@@ -15,6 +15,7 @@ using CeremonicBackend.WebApiModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Security.Cryptography;
 
 namespace CeremonicBackend.Repositories
 {
@@ -166,6 +167,47 @@ namespace CeremonicBackend.Repositories
                 filter &= Builders<BsonDocument>.Filter.Or(priceFilters);
             }
 
+            Func<ProviderEntity, decimal> comparing = null;
+            if (model.orderBy == OrderProvidersBy.ByPriceAsc)
+            {
+                comparing = p => p.AveragePrice.Min;
+            }
+            else if (model.orderBy == OrderProvidersBy.ByPriceDesc)
+            {
+                comparing = p => -p.AveragePrice.Min;
+            }
+            else if (model.orderBy == OrderProvidersBy.ByPriceCategoryAsc)
+            {
+                comparing = p =>
+                {
+                    DB.Mongo.ServiceEntity service1 =
+                        _UoW.ServiceRepository.GetById(p.ServiceId).Result.MongoServiceEntity;
+                    int categoryNum1 = service1.PriceRanges.FindIndex(r => r.Min == p.AveragePrice.Min);
+
+                    return categoryNum1;
+                };
+            }
+            else if (model.orderBy == OrderProvidersBy.ByPriceCategoryDesc)
+            {
+                comparing = p =>
+                {
+                    DB.Mongo.ServiceEntity service1 =
+                        _UoW.ServiceRepository.GetById(p.ServiceId).Result.MongoServiceEntity;
+                    int categoryNum1 = service1.PriceRanges.FindIndex(r => r.Min == p.AveragePrice.Min);
+
+                    return -categoryNum1;
+                };
+            }
+            else if (model.orderBy != OrderProvidersBy.None)
+            {
+                string arrJoin = String.Join(", ", OrderProvidersBy.Values);
+
+                throw new ArgumentException(
+                    $"{nameof(model.orderBy)} should be member of array: {{ {arrJoin} }}",
+                    nameof(model.orderBy)
+                );
+            }
+
             IEnumerable<BsonDocument> bsonDocuments = await _db.Database.GetCollection<BsonDocument>(CollectionName)
                 .Find(filter)
                 .ToListAsync();
@@ -186,6 +228,11 @@ namespace CeremonicBackend.Repositories
                     return BsonSerializer.Deserialize<ProviderEntity>(d);
                 }
             }).Select(t => t.Result);
+
+            if (model.orderBy != OrderProvidersBy.None)
+            {
+                providers = providers.OrderBy(comparing);
+            }
 
             return providers.ToList();
         }

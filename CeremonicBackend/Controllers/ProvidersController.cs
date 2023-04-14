@@ -9,6 +9,7 @@ using System;
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
+using System.Linq;
 
 namespace CeremonicBackend.Controllers
 {
@@ -28,7 +29,23 @@ namespace CeremonicBackend.Controllers
 
 
 
-        [Authorize]
+        [HttpGet]
+        [Route("sortOptions")]
+        public ActionResult<List<string>> SortOptions()
+        {
+            try
+            {
+                return OrderProvidersBy.Values.ToList();
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
+        }
+
         [HttpGet]
         [Route("search")]
         public async Task<ActionResult<List<ProviderApiModel>>> Search([FromQuery] SearchProviderApiModel model)
@@ -48,7 +65,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message + "\n" + exp.StackTrace
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
                 });
             }
         }
