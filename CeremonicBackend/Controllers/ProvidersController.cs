@@ -30,6 +30,25 @@ namespace CeremonicBackend.Controllers
 
 
         [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<ProviderApiModel>> Get([FromRoute] int id)
+        {
+            try
+            {
+                return Ok(await _providerService.Get(id));
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
+        }
+
+
+
+        [HttpGet]
         [Route("sortOptions")]
         public ActionResult<List<string>> SortOptions()
         {
