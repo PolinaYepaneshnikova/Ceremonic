@@ -12,6 +12,7 @@ using CeremonicBackend.Exceptions;
 using CeremonicBackend.Mappings;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace CeremonicBackend.Services
 {
@@ -62,7 +63,8 @@ namespace CeremonicBackend.Services
                     Max = 0,
                 },
                 WeddingPlan = null,
-                WeddingTeam = new object[] { },
+                WeddingTeam = new List<TeamRoleEntity>() { },
+                MyFavorites = new List<ProviderEntity>() { },
                 ApproximateBudget = new RangeEntity()
                 {
                     Min = 0,
