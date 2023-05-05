@@ -19,6 +19,7 @@ namespace CeremonicBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FavoritesController : ControllerBase
     {
         IFavoriteService _favoriteService { get; set; }
@@ -29,7 +30,6 @@ namespace CeremonicBackend.Controllers
 
 
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<ProviderApiModel>>> Get()
         {
