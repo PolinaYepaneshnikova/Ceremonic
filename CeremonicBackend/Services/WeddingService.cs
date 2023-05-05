@@ -64,7 +64,7 @@ namespace CeremonicBackend.Services
                 },
                 WeddingPlan = null,
                 WeddingTeam = new List<TeamRoleEntity>() { },
-                MyFavorites = new List<ProviderEntity>() { },
+                MyFavoritesIds = new List<int>() { },
                 ApproximateBudget = new RangeEntity()
                 {
                     Min = 0,

@@ -1,6 +1,7 @@
 ﻿using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.WebApiModels;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CeremonicBackend.Mappings
@@ -24,5 +25,18 @@ namespace CeremonicBackend.Mappings
                 GuestCountRange = entity.GuestCountRange,
                 ApproximateBudget = entity.ApproximateBudget,
             };
+
+        public static async Task<WeddingEntity> IncludeFavorites(this WeddingEntity entity, IProviderRepository providerRepository)
+        {
+            await Task.Run(() => { });
+
+            var myFavEnumerable = entity.MyFavoritesIds
+                .Select(async id => await providerRepository.GetById(id))
+                .Select(task => task.Result);
+
+            entity.MyFavorites = myFavEnumerable.ToList();
+
+            return entity;
+        }
     }
 }

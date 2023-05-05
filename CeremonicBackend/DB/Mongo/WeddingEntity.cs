@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CeremonicBackend.DB.Mongo
@@ -37,6 +37,8 @@ namespace CeremonicBackend.DB.Mongo
         public object WeddingPlan { get; set; }
         public List<TeamRoleEntity> WeddingTeam { get; set; }
 
+        public List<int> MyFavoritesIds { get; set; }
+        [BsonIgnore]
         public List<ProviderEntity> MyFavorites { get; set; }
 
 
