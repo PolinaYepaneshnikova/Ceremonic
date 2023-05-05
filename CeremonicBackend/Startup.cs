@@ -104,6 +104,7 @@ namespace CeremonicBackend
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWeddingService, WeddingService>();
             services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IFavoriteService, FavoriteService>();
 
             services.AddScoped<EmailAccountService>();
             services.AddScoped<GoogleAccountService>();
