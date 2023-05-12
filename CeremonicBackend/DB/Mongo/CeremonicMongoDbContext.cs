@@ -23,6 +23,11 @@ namespace CeremonicBackend.DB.Mongo
             get => Database.GetCollection<ServiceEntity>("services");
         }
 
+        public IMongoCollection<MessagingEntity> Messagings
+        {
+            get => Database.GetCollection<MessagingEntity>("messagings");
+        }
+
         public CeremonicMongoDbContext(string connectionString, string databaseName)
         {
             _connectionString = connectionString;
@@ -41,6 +46,14 @@ namespace CeremonicBackend.DB.Mongo
 
             await Services.Indexes
                 .CreateOneAsync(new CreateIndexModel<ServiceEntity>(Builders<ServiceEntity>.IndexKeys.Ascending(_ => _.Id)))
+                .ConfigureAwait(false);
+
+            await Messagings.Indexes
+                .CreateOneAsync(new CreateIndexModel<MessagingEntity>(Builders<MessagingEntity>.IndexKeys.Ascending(_ => _.User1Id)))
+                .ConfigureAwait(false);
+
+            await Messagings.Indexes
+                .CreateOneAsync(new CreateIndexModel<MessagingEntity>(Builders<MessagingEntity>.IndexKeys.Ascending(_ => _.User2Id)))
                 .ConfigureAwait(false);
 
             if (Services.CountDocuments(e => true) == 0)

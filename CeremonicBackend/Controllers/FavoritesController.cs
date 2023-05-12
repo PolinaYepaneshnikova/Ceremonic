@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
-using CeremonicBackend.Mappings;
-using CeremonicBackend.Services;
-using Newtonsoft.Json;
 
 namespace CeremonicBackend.Controllers
 {
