@@ -168,5 +168,23 @@ namespace CeremonicBackend.Repositories
 
             return messaging;
         }
+
+        public async Task<string> ContactNameById(int userId)
+        {
+            WeddingEntity wedding = await _UoW.WeddingRepository.GetById(userId);
+            ProviderEntity provider = await _UoW.ProviderRepository.GetById(userId);
+
+            if (wedding is not null)
+            {
+                return wedding.User1.FullName;
+            }
+
+            if (provider is not null)
+            {
+                return provider.BrandName;
+            }
+
+            throw new ArgumentException("There are not weddings or providers with such ID.");
+        }
     }
 }

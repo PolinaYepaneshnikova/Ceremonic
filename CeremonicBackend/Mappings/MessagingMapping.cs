@@ -13,13 +13,12 @@ namespace CeremonicBackend.Mappings
         public static async Task<MessagingCardApiModel> ToMessagingCardApiModel(
             this MessagingEntity entity,
             int CompanionId,
-            IWeddingRepository weddingRepository,
-            IProviderRepository providerRepository
+            IMessagingRepository messagingRepository
         )
         {
             var messagingCard = new MessagingCardApiModel()
             {
-                UserName = await ContactNameById(CompanionId, weddingRepository, providerRepository),
+                UserName = await messagingRepository.ContactNameById(CompanionId),
                 CountOfNotViewedMessages = entity.MessagesList.Sum(m => (m.NotViewed ?? false) ? 1 : 0)
             };
 
@@ -51,7 +50,7 @@ namespace CeremonicBackend.Mappings
                NotViewed = entity.NotViewed ?? false,
            };
 
-        public static async Task<MessageEntity> ToMessageEntity(this SendMessageApiModel model, IUserRepository userRepository, string userEmail, DateTime postedAt)
+        public static async Task<MessageEntity> ToMessageEntity(this SendMessageApiModel model, string userEmail, DateTime postedAt, IUserRepository userRepository)
            => new MessageEntity()
            {
                Id = 0,
@@ -78,28 +77,6 @@ namespace CeremonicBackend.Mappings
             }
 
             return messaging;
-        }
-
-        public static async Task<string> ContactNameById(
-            int userId,
-            IWeddingRepository weddingRepository,
-            IProviderRepository providerRepository
-        )
-        {
-            WeddingEntity wedding = await weddingRepository.GetById(userId);
-            ProviderEntity provider = await providerRepository.GetById(userId);
-
-            if (wedding is not null)
-            {
-                return wedding.User1.FullName;
-            }
-
-            if (provider is not null)
-            {
-                return provider.BrandName;
-            }
-
-            throw new ArgumentException("There are not weddings or providers with such ID.");
         }
     }
 }
