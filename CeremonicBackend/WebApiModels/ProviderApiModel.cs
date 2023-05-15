@@ -7,6 +7,7 @@ namespace CeremonicBackend.WebApiModels
     public class ProviderApiModel
     {
         public int UserId { get; set; }
+
         public string ServiceName { get; set; }
         public string BrandName { get; set; }
         public string AvatarFileName { get; set; }
