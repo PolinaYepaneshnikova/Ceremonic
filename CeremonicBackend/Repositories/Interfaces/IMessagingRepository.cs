@@ -14,7 +14,7 @@ namespace CeremonicBackend.Repositories.Interfaces
         Task<MessagingEntity> GetByUsersId(int id1, int id2);
         Task<List<MessagingCardApiModel>> GetMessagingCardsOfCompanions(int id);
         Task<List<MessageEntity>> GetNewMessagesInMessaging(int id1, int id2);
-        Task<string> ContactNameById(int userId);
+        Task<string> GetContactNameById(int userId);
 
         Task<MessagingEntity> Add(int id1, int id2, MessageEntity message);
         Task<MessagingEntity> SetViewed(int id1, int id2, int idMessage);

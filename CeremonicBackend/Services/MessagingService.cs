@@ -44,6 +44,13 @@ namespace CeremonicBackend.Services
                 .ToMessagingApiModel();
         }
 
+        public async Task<string> GetContactNameById(string userEmail)
+        {
+            UserEntity user = await _UoW.UserRepository.GetByEmail(userEmail);
+
+            return await _UoW.MessagingRepository.GetContactNameById(user.Id);
+        }
+
         public async Task SendMessage(string authorEmail, SendMessageApiModel message, DateTime postedAt)
         {
             UserEntity user1 = await _UoW.UserRepository.GetByEmail(authorEmail),

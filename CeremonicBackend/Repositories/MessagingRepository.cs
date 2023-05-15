@@ -167,7 +167,7 @@ namespace CeremonicBackend.Repositories
             return messaging;
         }
 
-        public async Task<string> ContactNameById(int userId)
+        public async Task<string> GetContactNameById(int userId)
         {
             WeddingEntity wedding = await _UoW.WeddingRepository.GetById(userId);
             ProviderEntity provider = await _UoW.ProviderRepository.GetById(userId);
