@@ -11,7 +11,7 @@ namespace CeremonicBackend.WebApiModels
         public string City { get; set; }
         public RangeEntity AveragePrice { get; set; }
         public RangeEntity GuestCount { get; set; }
-        public IList<string> DeletedImageNames { get; set; }
-        public IList<IFormFile> AddedImageFiles { get; set; }
+        public List<string> DeletedImageNames { get; set; }
+        public List<IFormFile> AddedImageFiles { get; set; }
     }
 }

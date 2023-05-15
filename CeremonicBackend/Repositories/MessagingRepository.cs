@@ -50,29 +50,27 @@ namespace CeremonicBackend.Repositories
             return messaging.OrderByMyAndCompanion(id1, id2);
         }
 
-        public async Task<IEnumerable<MessagingCardApiModel>> GetMessagingCardsOfCompanions(int id)
+        public async Task<List<MessagingCardApiModel>> GetMessagingCardsOfCompanions(int id)
         {
-            IEnumerable<MessagingEntity> messagings = (await _db.Messagings.FindAsync(
+            List<MessagingEntity> messagings = (await _db.Messagings.FindAsync(
                 e => e.User1Id == id || e.User2Id == id
             )).ToList();
 
-            IEnumerable<MessagingCardApiModel> messagingCards
+            List<MessagingCardApiModel> messagingCards
                 = messagings
-                .Select(async e => await e.ToMessagingCardApiModel(
-                    e.User1Id == id ? e.User2Id : e.User1Id,
-                    _UoW.WeddingRepository,
-                    _UoW.ProviderRepository
-                )).Select(e => e.Result);
+                .Select(async e => await e.ToMessagingCardApiModel(e.User1Id == id ? e.User2Id : e.User1Id, this))
+                .Select(e => e.Result)
+                .ToList();
 
 
             return messagingCards;
         }
 
-        public async Task<IEnumerable<MessageEntity>> GetNewMessagesInMessaging(int id1, int id2)
+        public async Task<List<MessageEntity>> GetNewMessagesInMessaging(int id1, int id2)
         {
             MessagingEntity messaging = await GetByUsersId(id1, id2);
 
-            IEnumerable<MessageEntity> messages = messaging.MessagesList.ToList().Where(e => e.NotViewed ?? false).ToList();
+            List<MessageEntity> messages = messaging.MessagesList.ToList().Where(e => e.NotViewed ?? false).ToList();
 
             return messages;
         }
@@ -132,10 +130,10 @@ namespace CeremonicBackend.Repositories
 
 
 
-        public async Task<IEnumerable<MessagingEntity>> GetByPredicate(Expression<Func<MessagingEntity, bool>> predicate)
+        public async Task<IQueryable<MessagingEntity>> GetByPredicate(Expression<Func<MessagingEntity, bool>> predicate)
             => (await _db.Messagings.FindAsync(
                 predicate ?? (e => true)
-            )).ToEnumerable();
+            )).ToEnumerable().AsQueryable();
 
         public async Task<MessagingEntity> Delete(int id1, int id2)
         {

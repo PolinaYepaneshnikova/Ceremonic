@@ -212,7 +212,7 @@ namespace CeremonicBackend.Repositories
                 );
             }
 
-            IEnumerable<BsonDocument> bsonDocuments = await _db.Database.GetCollection<BsonDocument>(CollectionName)
+            List<BsonDocument> bsonDocuments = await _db.Database.GetCollection<BsonDocument>(CollectionName)
                 .Find(filter)
                 .ToListAsync();
 

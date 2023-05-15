@@ -10,6 +10,6 @@ namespace CeremonicBackend.DB.Mongo
     {
         public int User1Id { get; set; }
         public int User2Id { get; set; }
-        public IList<MessageEntity> MessagesList { get; set; }
+        public List<MessageEntity> MessagesList { get; set; }
     }
 }
