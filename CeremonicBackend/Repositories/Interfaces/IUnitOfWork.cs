@@ -13,6 +13,7 @@ namespace CeremonicBackend.Repositories.Interfaces
 
         IWeddingRepository WeddingRepository { get; }
         IProviderRepository ProviderRepository { get; }
+        IMessagingRepository MessagingRepository { get; }
 
         IFileRepository FileRepository { get; }
         void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);

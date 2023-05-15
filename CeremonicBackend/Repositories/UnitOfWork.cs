@@ -19,6 +19,7 @@ namespace CeremonicBackend.Repositories
 
         public IWeddingRepository WeddingRepository { get; protected set; }
         public IProviderRepository ProviderRepository { get; protected set; }
+        public IMessagingRepository MessagingRepository { get; protected set; }
 
         public IFileRepository FileRepository { get; protected set; }
 
@@ -33,6 +34,7 @@ namespace CeremonicBackend.Repositories
 
             WeddingRepository = new WeddingRepository(mongoDb, this);
             ProviderRepository = new ProviderRepository(mongoDb, this);
+            MessagingRepository = new MessagingRepository(mongoDb, this);
         }
 
         public void SetFileRepository(ControllerBase controller, IWebHostEnvironment env)
