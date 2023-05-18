@@ -16,7 +16,7 @@ namespace CeremonicBackend.Repositories.Interfaces
         IMessagingRepository MessagingRepository { get; }
 
         IFileRepository FileRepository { get; }
-        void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);
+        void SetProperties(ControllerBase controller, IWebHostEnvironment env);
 
         Task<int> SaveChanges();
     }

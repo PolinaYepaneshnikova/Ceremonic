@@ -37,7 +37,7 @@ namespace CeremonicBackend.Repositories
             MessagingRepository = new MessagingRepository(mongoDb, this);
         }
 
-        public void SetFileRepository(ControllerBase controller, IWebHostEnvironment env)
+        public void SetProperties(ControllerBase controller, IWebHostEnvironment env)
         {
             FileRepository = new FileRepository(controller, env);
         }

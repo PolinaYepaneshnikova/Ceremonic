@@ -24,7 +24,7 @@ namespace CeremonicBackend.Controllers
         )
         {
             _providerService = providerService;
-            _providerService.SetFileRepository(this, env);
+            _providerService.SetProperties(this, env);
         }
 
 

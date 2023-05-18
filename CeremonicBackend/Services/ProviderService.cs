@@ -23,9 +23,9 @@ namespace CeremonicBackend.Services
         {
             _UoW = uow;
         }
-        public void SetFileRepository(ControllerBase controller, IWebHostEnvironment env)
+        public void SetProperties(ControllerBase controller, IWebHostEnvironment env)
         {
-            _UoW.SetFileRepository(controller, env);
+            _UoW.SetProperties(controller, env);
         }
 
 

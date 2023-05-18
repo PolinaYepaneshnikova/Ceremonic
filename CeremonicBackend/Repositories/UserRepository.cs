@@ -18,6 +18,10 @@ namespace CeremonicBackend.Repositories
             => await Task.Run(() => _db.Users.Include(e => e.LoginInfo)
             .Where(e => e.LoginInfo.Email == email).FirstOrDefault());
 
+        public async Task<string> GetEmailById(int id)
+            => await Task.Run(() => _db.Users.Include(e => e.LoginInfo)
+            .Where(e => e.Id == id).FirstOrDefault().LoginInfo.Email);
+
         public async Task<string> GetHashPasswordById(int id)
             => await Task.Run(() => _db.UserLoginInfos
             .Where(e => e.Id == id).FirstOrDefault()

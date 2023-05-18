@@ -37,7 +37,7 @@ namespace CeremonicBackend.Controllers
             _providerCreatorService = providerCreatorService;
             _providerService = providerService;
 
-            _providerService.SetFileRepository(this, env);
+            _providerService.SetProperties(this, env);
         }
 
         [HttpPost]

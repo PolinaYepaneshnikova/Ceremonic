@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,10 @@ using Microsoft.OpenApi.Models;
 
 using System.Threading.Tasks;
 
+using Swashbuckle.AspNetCore;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Authentification;
@@ -17,6 +22,7 @@ using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Repositories;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Services;
+using Microsoft.Extensions.Options;
 
 namespace CeremonicBackend
 {
@@ -56,6 +62,8 @@ namespace CeremonicBackend
 
 
             services.AddControllers();
+            services.AddSignalR();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CeremonicBackend", Version = "v1" });
@@ -82,6 +90,7 @@ namespace CeremonicBackend
                         new string[] { }
                     }
                 });
+                c.AddSignalRSwaggerGen();
             });
 
 
@@ -105,6 +114,7 @@ namespace CeremonicBackend
             services.AddScoped<IWeddingService, WeddingService>();
             services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IFavoriteService, FavoriteService>();
+            services.AddScoped<IMessagingService, MessagingService>();
 
             services.AddScoped<EmailAccountService>();
             services.AddScoped<GoogleAccountService>();
@@ -137,7 +147,7 @@ namespace CeremonicBackend
                             // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments("/messenger")))
+                                (path.StartsWithSegments("/hubs/MessengerHub")))
                             {
                                 // Read the token out of the query string
                                 context.Token = accessToken;

@@ -25,7 +25,7 @@ namespace CeremonicBackend.Controllers
         {
             _weddingService = weddingService;
 
-            _weddingService.SetFileRepository(this, env);
+            _weddingService.SetProperties(this, env);
         }
 
 

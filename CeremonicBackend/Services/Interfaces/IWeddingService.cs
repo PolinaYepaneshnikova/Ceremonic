@@ -11,7 +11,7 @@ namespace CeremonicBackend.Services.Interfaces
 {
     public interface IWeddingService
     {
-        void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);
+        void SetProperties(ControllerBase controller, IWebHostEnvironment env);
 
         Task<WeddingEntity> CreateForUser(UserEntity user);
         Task<WeddingApiModel> Get(int userId);

@@ -12,7 +12,7 @@ namespace CeremonicBackend.Services.Interfaces
 {
     public interface IProviderService
     {
-        void SetFileRepository(ControllerBase controller, IWebHostEnvironment env);
+        void SetProperties(ControllerBase controller, IWebHostEnvironment env);
 
         Task<ProviderApiModel> CreateForUser(UserEntity user, ProviderInfoApiModel providerInfo);
         Task<ProviderApiModel> Get(int userId);
