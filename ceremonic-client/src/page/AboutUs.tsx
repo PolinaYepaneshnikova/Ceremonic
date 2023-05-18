@@ -1,4 +1,3 @@
-import React from 'react';
 import './css/aboutUs.css'
 import { ReactComponent as Vector } from '../assets/image/header/Vector.svg'
 import Button from '../components/Button';
@@ -14,7 +13,14 @@ import PreRight1 from '../assets/image/Page_AboutUs/pre-right1.png'
 import PreRight2 from '../assets/image/Page_AboutUs/pre-right2.png'
 import PreRight3 from '../assets/image/Page_AboutUs/pre-right3.png'
 
-function AboutUs() {
+import {useNavigate} from "react-router-dom";
+import { REGISTRATION_PROVIDER_ROUTE, REGISTRATION_ROUTE, } from "../utils/constRoutes";
+import React from 'react';
+
+const AboutUs: React.FC = () => {
+
+  const navigate = useNavigate()
+
   return (
     <div className="aboutUs">
 
@@ -124,8 +130,10 @@ function AboutUs() {
 
           <div className="motivation">
             <p>Швиденько реєструйся та спробуй можливості Ceremonic! </p>
-            <Button kind='button_secondary' >Зареєструватися</Button>
-            <div className='supp'><Vector className='vec' /> &nbsp;&nbsp; Ви постачальник?</div>
+            <Button kind='button_secondary' onClick={() => navigate(REGISTRATION_ROUTE, {replace: true})}>Зареєструватися</Button>
+            <div className='supp' onClick={() => navigate(REGISTRATION_PROVIDER_ROUTE, {replace: true})}>
+              <Vector className='vec' /> &nbsp;&nbsp; Надаєте послуги?
+            </div>
           </div>
 
     </div>

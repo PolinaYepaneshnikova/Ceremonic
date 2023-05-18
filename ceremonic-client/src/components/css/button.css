@@ -33,4 +33,30 @@
 .button_with-background:hover{
     transition: all 2ms;
     cursor: pointer;
+    background: #2DCCD7;
+}
+.button_with-shadow{
+    box-sizing: border-box;
+    border: 0;
+    background: #57BAC0;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+}
+.button_with-shadow:hover{
+    transition: all 2ms;
+    cursor: pointer;
+    background: #2DCCD7;
+}
+.button_with-border{
+    box-sizing: border-box;
+    border: 1px solid #79747E;
+    border-radius: 100px;
+    color: #00889A;
+    background: transparent;
+}
+.button_with-border:hover{
+    transition: all 2ms;
+    cursor: pointer;
+    background: #57BAC0;
+    color: #DFFDFF;
 }

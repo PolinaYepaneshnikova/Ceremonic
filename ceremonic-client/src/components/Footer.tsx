@@ -3,7 +3,10 @@ import styles from './css/footer.module.css'
 import insta from '../assets/image/footer/insta.png'
 import facebook from '../assets/image/footer/facebook.png'
 
+
 function Footer () {
+
+
   return (
     <div className={styles.footer}>
       <div className={styles.left}>
@@ -13,10 +16,11 @@ function Footer () {
       <div className={styles.right}>
         <p>Україна, м. Харків, проспект Науки 14 <br />
         +(380) 66 96 19 232</p>
-        <p>@ 2022 CeremonicTEAM. <br /> 
+        <p>@ 2023 CeremonicTEAM. <br /> 
         Усі права захищені.</p>
       </div>
     </div>
+    
   );
 }
 

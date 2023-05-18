@@ -1,5 +1,8 @@
-import React from 'react';
 import './css/indexPage.css';
+
+import {useNavigate} from 'react-router-dom'
+import { INDEX_PAGE_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, ABOUT_US_ROUTE } from '../utils/constRoutes';
+
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Lupa from '../assets/image/Page_IndexPage/Lupa.svg'
@@ -32,7 +35,9 @@ import step_4_1 from '../assets/image/Page_IndexPage/step_4_1.png'
 import step_4_2 from '../assets/image/Page_IndexPage/step_4_2.png'
 import step_5 from '../assets/image/Page_IndexPage/step_5.png'
 
-const IndexPage = () => {
+const IndexPage: React.FC = () => {
+
+    const navigate = useNavigate()
 
     return(
         <div className="index-page">
@@ -49,13 +54,14 @@ const IndexPage = () => {
                     <div className="buttons-search">
                         <div className="buttons-search__what">
                             <img src={Lupa} alt="Lupa" />
-                            <Input kind='input_primary' padding='8px 0px 8px 34px' borderTopLeftRadius='4px' borderBottomLeftRadius='4px' placeholder='Що шукати'/>
+                            <Input kind='input_primary' padding='8px 0px 8px 34px' borderRadius='4px 0px 0px 4px' placeholder='Що шукати' boxShadow='0px 4px 4px rgba(0, 0, 0, 0.25)'/>
                         </div>
                         <div className="buttons-search__where">
                             <img src={Map} alt="Map" />
-                            <Input kind='input_primary' padding='8px 34px 8px 12px' placeholder='Де'/>
+                            <Input kind='input_primary' padding='8px 34px 8px 12px' placeholder='Де' 
+                            boxShadow='0px 4px 4px rgba(0, 0, 0, 0.25)'/>
                         </div>
-                        <Button kind='button_with-background' width='100px' borderRadius='0px 4px 4px 0px'>Пошук</Button>
+                        <Button kind='button_with-shadow' color='white' width='100px' borderRadius='0px 4px 4px 0px'>Пошук</Button>
                     </div>
 
                     <div className="button-services">
@@ -122,9 +128,11 @@ const IndexPage = () => {
                     </p>
                     <div className="steps-road-step__step-1_buttons">
                         Зареєструйтеся в системі
-                        <Button kind='button_with-background' width='144px' lineHeight='20px' borderRadius='4px'>Зареєструватися</Button>
+                        <Button kind='button_with-shadow' width='144px' onClick={() => navigate(REGISTRATION_ROUTE, {replace: true})}
+                        lineHeight='20px' borderRadius='4px'>Зареєструватися</Button>
                         Або увійдіть
-                        <Button kind='button_with-background' width='100px' lineHeight='20px' borderRadius='4px'>Увійти</Button>
+                        <Button kind='button_with-shadow' width='100px' onClick={() => navigate(LOGIN_ROUTE, {replace: true})}
+                        lineHeight='20px' borderRadius='4px'>Увійти</Button>
                     </div>
                 </div>
 

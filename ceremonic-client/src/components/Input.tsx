@@ -1,20 +1,30 @@
 import React, { FC } from 'react';
 import './css/input.css'
 
-interface InputProps extends React.HTMLAttributes<any> {
+interface InputProps extends React.InputHTMLAttributes<any> {
     kind: string;
     padding?: string;
-    borderBottomLeftRadius?: string;
-    borderTopLeftRadius?: string;
+    borderRadius?: string;
+    boxShadow?: string;
+    border?: string;
+    maxWidth?: string;
+    width?: string;
+    maxHeight?: string;
+    margin?: string;
     
 }
 
 const Input: FC<InputProps> = ({
-                                        children,
+                                        
                                         kind,
+                                        maxWidth,
+                                        width,
+                                        maxHeight,
+                                        boxShadow,
                                         padding,
-                                        borderBottomLeftRadius,
-                                        borderTopLeftRadius,
+                                        margin,
+                                        border,
+                                        borderRadius,
                                         ...props
                                      }) => {
 
@@ -23,15 +33,16 @@ const Input: FC<InputProps> = ({
 
     let rootClasses = ['input_primary']
 
-    if(kind === 'input_secondary'){
-        rootClasses = ['input_secondary']
+    if(kind === 'input_without-border'){
+        rootClasses = ['input_without-border']
     }
 
 
     return (
-        <input {...props} style={{padding, borderTopLeftRadius, borderBottomLeftRadius}} className={rootClasses.join(' ')} >
-            {children}
-        </input>
+        <input {...props} style={{border, borderRadius, padding, margin,
+            maxWidth, width, maxHeight, boxShadow}} 
+        className={rootClasses.join(' ')} />
+
     );
 };
 
