@@ -22,12 +22,12 @@ namespace CeremonicBackend.Mappings
                 ConfirmStatus = entity.ConfirmStatus,
             };
 
-        public static async Task<AgreementEntity> ToAgreementEntity(this SendAgreementApiModel model, string providerEmail, DateTime postedAt, IUserRepository userRepository)
+        public static async Task<AgreementEntity> ToAgreementEntity(this SendAgreementApiModel model, string providerEmail, IUserRepository userRepository)
             => new AgreementEntity()
             {
                 ProviderId = (await userRepository.GetByEmail(providerEmail)).Id,
                 ClientId = model.ClientId,
-                DateTime = postedAt,
+                DateTime = model.DateTime,
                 Price = model.Price,
                 Location = model.Location,
                 Service = model.Service,

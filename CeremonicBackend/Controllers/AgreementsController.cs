@@ -44,7 +44,7 @@ namespace CeremonicBackend.Controllers
             string providerEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
             string destinationEmail = await _userService.GetEmailById(agreement.ClientId);
 
-            await _agreementService.Create(providerEmail, agreement, DateTime.Now);
+            await _agreementService.Create(providerEmail, agreement);
 
             IEnumerable<MessagingCardApiModel> messagingCards;
 

@@ -7,7 +7,7 @@ namespace CeremonicBackend.Services.Interfaces
 {
     public interface IAgreementService
     {
-        public Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement, DateTime postedAt);
+        public Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement);
         public Task<AgreementApiModel> Get(int id);
         public Task<AgreementApiModel> Confirm(int id);
         public Task<AgreementApiModel> Cancel(int id);

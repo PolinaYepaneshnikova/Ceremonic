@@ -21,9 +21,9 @@ namespace CeremonicBackend.Services
             _messagingService = messagingService;
         }
 
-        public async Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement, DateTime postedAt)
+        public async Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement)
         {
-            AgreementEntity agreementEntity = await agreement.ToAgreementEntity(providerEmail, postedAt, _UoW.UserRepository);
+            AgreementEntity agreementEntity = await agreement.ToAgreementEntity(providerEmail, _UoW.UserRepository);
             agreementEntity = await _UoW.AgreementRepository.Add(agreementEntity);
 
             SendMessageApiModel message = new SendMessageApiModel()
