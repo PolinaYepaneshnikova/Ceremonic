@@ -11,10 +11,6 @@ using Microsoft.OpenApi.Models;
 
 using System.Threading.Tasks;
 
-using Swashbuckle.AspNetCore;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerUI;
-
 using CeremonicBackend.DB.Mongo;
 using CeremonicBackend.DB.Relational;
 using CeremonicBackend.Authentification;
@@ -22,7 +18,6 @@ using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Repositories;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Services;
-using Microsoft.Extensions.Options;
 
 namespace CeremonicBackend
 {
@@ -115,6 +110,7 @@ namespace CeremonicBackend
             services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IFavoriteService, FavoriteService>();
             services.AddScoped<IMessagingService, MessagingService>();
+            services.AddScoped<IAgreementService, AgreementService>();
 
             services.AddScoped<EmailAccountService>();
             services.AddScoped<GoogleAccountService>();

@@ -14,6 +14,7 @@ namespace CeremonicBackend.Repositories
         protected ICeremonicMongoDbContext _mongoDb { get; set; }
 
         public IUserRepository UserRepository { get; protected set; }
+        public IAgreementRepository AgreementRepository { get; protected set; }
 
         public IServiceRepository ServiceRepository { get; protected set; }
 
@@ -29,6 +30,7 @@ namespace CeremonicBackend.Repositories
             _mongoDb = mongoDb;
 
             UserRepository = new UserRepository(relationalDb, this);
+            AgreementRepository = new AgreementRepository(relationalDb, this); 
 
             ServiceRepository = new ServiceRepository(relationalDb, mongoDb, this);
 

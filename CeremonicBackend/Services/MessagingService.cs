@@ -68,6 +68,7 @@ namespace CeremonicBackend.Services
             }
 
             await _UoW.MessagingRepository.Add(user1.Id, user2.Id, entity);
+            await _UoW.SaveChanges();
         }
 
         public async Task<List<MessageApiModel>> GetNewMessages(string user1Email, int user2Id)
@@ -88,6 +89,8 @@ namespace CeremonicBackend.Services
             {
                 await _UoW.MessagingRepository.SetViewed(user1.Id, user2.Id, idMessage);
             }
+
+            await _UoW.SaveChanges();
         }
     }
 }

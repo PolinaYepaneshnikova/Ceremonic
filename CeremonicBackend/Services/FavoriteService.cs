@@ -50,6 +50,7 @@ namespace CeremonicBackend.Services
             wedding.MyFavoritesIds.Add(providerId);
 
             await _UoW.WeddingRepository.Update(wedding);
+            await _UoW.SaveChanges();
         }
 
         public async Task Delete(string userEmail, int providerId)
@@ -64,6 +65,7 @@ namespace CeremonicBackend.Services
             wedding.MyFavoritesIds.Remove(providerId);
 
             await _UoW.WeddingRepository.Update(wedding);
+            await _UoW.SaveChanges();
         }
     }
 }

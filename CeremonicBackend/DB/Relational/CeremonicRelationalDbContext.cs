@@ -11,6 +11,7 @@ namespace CeremonicBackend.DB.Relational
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<UserLoginInfoEntity> UserLoginInfos { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }
+        public DbSet<AgreementEntity> Agreements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -92,7 +92,7 @@ namespace CeremonicBackend.Controllers
             return messages;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("messagesIsViewed/{companionId}")]
         public async Task<IActionResult> MessagesIsViewed([FromRoute] int companionId, [FromBody] List<int> messageIDs)
         {

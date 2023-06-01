@@ -79,6 +79,8 @@ namespace CeremonicBackend.Services
                 });
             }
 
+            await _UoW.SaveChanges();
+
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
 
@@ -150,6 +152,7 @@ namespace CeremonicBackend.Services
             }
 
             await _UoW.ProviderRepository.Update(provider);
+            await _UoW.SaveChanges();
 
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }
@@ -171,6 +174,7 @@ namespace CeremonicBackend.Services
             provider.AvatarFileName = filename;
 
             await _UoW.ProviderRepository.Update(provider);
+            await _UoW.SaveChanges();
 
             return await provider.ToProviderApiModel(_UoW.ServiceRepository);
         }

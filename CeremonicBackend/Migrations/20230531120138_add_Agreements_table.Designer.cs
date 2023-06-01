@@ -3,14 +3,16 @@ using System;
 using CeremonicBackend.DB.Relational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CeremonicBackend.Migrations
 {
     [DbContext(typeof(CeremonicRelationalDbContext))]
-    partial class CeremonicRelationalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230531120138_add_Agreements_table")]
+    partial class add_Agreements_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,11 +27,11 @@ namespace CeremonicBackend.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ConfirmStatus")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("ConfirmStatus")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Location")
                         .HasColumnType("TEXT");

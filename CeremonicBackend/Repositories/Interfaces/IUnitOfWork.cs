@@ -8,6 +8,7 @@ namespace CeremonicBackend.Repositories.Interfaces
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
+        IAgreementRepository AgreementRepository { get; }
 
         IServiceRepository ServiceRepository { get; }
 

@@ -73,6 +73,8 @@ namespace CeremonicBackend.Services
                 Budget = null,
             });
 
+            await _UoW.SaveChanges();
+
             return wedding;
         }
 
@@ -119,6 +121,7 @@ namespace CeremonicBackend.Services
             wedding.ApproximateBudget = model.ApproximateBudget;
 
             await _UoW.WeddingRepository.Update(wedding);
+            await _UoW.SaveChanges();
 
             return wedding.ToWeddingApiModel();
         }
@@ -154,6 +157,7 @@ namespace CeremonicBackend.Services
             }
 
             await _UoW.WeddingRepository.Update(wedding);
+            await _UoW.SaveChanges();
 
             return wedding.ToWeddingApiModel();
         }
