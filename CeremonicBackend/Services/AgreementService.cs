@@ -25,6 +25,7 @@ namespace CeremonicBackend.Services
         {
             AgreementEntity agreementEntity = await agreement.ToAgreementEntity(providerEmail, _UoW.UserRepository);
             agreementEntity = await _UoW.AgreementRepository.Add(agreementEntity);
+            await _UoW.SaveChanges();
 
             SendMessageApiModel message = new SendMessageApiModel()
             {
