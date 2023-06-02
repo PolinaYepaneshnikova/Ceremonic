@@ -7,7 +7,7 @@ using CeremonicBackend.DB.Relational;
 
 namespace CeremonicBackend.Controllers
 {
-    [Route("api/users")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {

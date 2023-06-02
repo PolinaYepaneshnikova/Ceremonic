@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MongoDB.Bson;
 
 using CeremonicBackend.DB.Relational;
 
+
 namespace CeremonicBackend.DB.Mongo
 {
-    public class PersonEntity : BaseEntity<Guid>
+    public class PersonEntity : BaseEntity<ObjectId>
     {
         public string FullName { get; set; }
         public string AvatarFileName { get; set; }

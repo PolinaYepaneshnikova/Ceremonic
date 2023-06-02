@@ -12,26 +12,31 @@ namespace CeremonicBackend.Repositories
 {
     public class BaseMongoRepositoryWithIdKey<Entity, IdType> : IBaseRepository<Entity, IdType> where Entity : BaseEntity<IdType>
     {
-        protected CeremonicMongoDbContext _db;
-        protected string _collectionName;
-        public BaseMongoRepositoryWithIdKey(CeremonicMongoDbContext db, string collectionName)
+        protected ICeremonicMongoDbContext _db;
+        protected IUnitOfWork _UoW;
+
+        public string CollectionName;
+        public BaseMongoRepositoryWithIdKey(ICeremonicMongoDbContext db, IUnitOfWork uow, string collectionName)
         {
             _db = db;
+            _UoW = uow;
+
+            CollectionName = collectionName;
         }
 
         public async Task<Entity> GetById(IdType id)
-            => (await _db.Database.GetCollection<Entity>(_collectionName)
+            => (await _db.Database.GetCollection<Entity>(CollectionName)
             .FindAsync(e => e.Id.Equals(id))).FirstOrDefault();
 
         public async Task<IQueryable<Entity>> GetByPredicate(Func<Entity, bool> predicate)
-            => (await _db.Database.GetCollection<Entity>(_collectionName)
+            => (await _db.Database.GetCollection<Entity>(CollectionName)
             .FindAsync(e => predicate(e))).ToList().AsQueryable();
 
         public async Task<Entity> Add(Entity entity)
         {
             await Task.Run(() => { });
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .InsertOne(entity);
 
             return entity;
@@ -41,7 +46,7 @@ namespace CeremonicBackend.Repositories
         {
             await Task.Run(() => { });
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .ReplaceOne(e => e.Id.Equals(entity.Id), entity);
 
             return entity;
@@ -51,7 +56,7 @@ namespace CeremonicBackend.Repositories
         {
             Entity entity = await GetById(id);
 
-            _db.Database.GetCollection<Entity>(_collectionName)
+            _db.Database.GetCollection<Entity>(CollectionName)
                 .DeleteOne(e => e.Id.Equals(id));
 
             return entity;

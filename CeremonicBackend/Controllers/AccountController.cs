@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
+using System.Linq;
 using System;
 
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Exceptions;
-using System.Linq;
+using CeremonicBackend.Services;
+using CeremonicBackend.Mappings;
+using System.Security.Claims;
 
 namespace CeremonicBackend.Controllers
 {
@@ -17,28 +20,92 @@ namespace CeremonicBackend.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        IAccountService _accountService { get; set; }
         IUserService _userService { get; set; }
-        public AccountController(IAccountService accountService, IUserService userService)
+        IAccountService _accountService { get; set; }
+        EmailAccountService _emailAccountService { get; set; }
+        GoogleAccountService _googleAccountService { get; set; }
+        ClientCreatorService _clientCreatorService { get; set; }
+        public AccountController(
+            IUserService userService,
+            EmailAccountService emailAccountService,
+            GoogleAccountService googleAccountService,
+            ClientCreatorService clientCreatorService
+            )
         {
-            _accountService = accountService;
             _userService = userService;
+            _emailAccountService = emailAccountService;
+            _googleAccountService = googleAccountService;
+            _clientCreatorService = clientCreatorService;
         }
-
-        /*{
-          "firstName": "Павло",
-          "lastName": "Дунайський",
-          "email": "PavloDunayskyy@net.ua,
-          "password": "1234"
-        }*/
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<JwtApiModel>> Login([FromBody] LoginApiModel model)
+        public async Task<ActionResult<JwtApiModel>> EmailLogin([FromBody] LoginApiModel model)
+        {
+            _emailAccountService.Email = model.Email;
+            _emailAccountService.Password = model.Password;
+
+            _accountService = _emailAccountService;
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Login();
+        }
+
+        [HttpPost]
+        [Route("registration")]
+        public async Task<ActionResult<JwtApiModel>> EmailRegistration([FromBody] RegistrationApiModel model)
+        {
+            _emailAccountService.Email = model.Email;
+            _emailAccountService.Password = model.Password;
+
+            _accountService = _emailAccountService;
+
+            _clientCreatorService.RegistrationModel = model;
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Registration();
+        }
+
+        [HttpPost]
+        [Route("googleLogin")]
+        public async Task<ActionResult<JwtApiModel>> GoogleLogin([FromBody] TokenIdApiModel model)
+        {
+            _googleAccountService.TokenId = model.TokenId;
+
+            _accountService = _googleAccountService;
+
+            _clientCreatorService.RegistrationModel = new RegistrationApiModel();
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Login();
+        }
+
+        [HttpPost]
+        [Route("googleRegistration")]
+        public async Task<ActionResult<JwtApiModel>> GoogleRegistration([FromBody] GoogleRegistrationApiModel model)
+        {
+            _googleAccountService.TokenId = model.TokenId;
+
+            _accountService = _googleAccountService;
+
+            _clientCreatorService.RegistrationModel = model.ToRegistrationApiModel();
+            _accountService.UserCreatorService = _clientCreatorService;
+
+            return await Registration();
+        }
+
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("currentUser")]
+        public async Task<ActionResult<UserApiModel>> CurrentUser()
         {
             try
             {
-                return await _accountService.Login(model.Email, model.Password);
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+
+                return await _userService.Get(userEmail);
             }
             catch (NotFoundAppException)
             {
@@ -51,18 +118,42 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
                 });
             }
         }
 
-        [HttpPost]
-        [Route("registration")]
-        public async Task<ActionResult<JwtApiModel>> Registration([FromBody] RegistrationApiModel model)
+
+
+
+
+        private async Task<ActionResult<JwtApiModel>> Login()
         {
             try
             {
-                return await _accountService.Registration(model);
+                return await _accountService.Login();
+            }
+            catch (NotFoundAppException)
+            {
+                return BadRequest(new
+                {
+                    Error = "User not exists"
+                });
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
+        }
+
+        private async Task<ActionResult<JwtApiModel>> Registration()
+        {
+            try
+            {
+                return await _accountService.Registration();
             }
             catch (AlreadyExistAppException)
             {
@@ -75,36 +166,7 @@ namespace CeremonicBackend.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = exp.Message
-                });
-            }
-        }
-
-
-
-        [Authorize]
-        [HttpGet]
-        [Route("currentUser")]
-        public async Task<ActionResult<UserApiModel>> CurrentUser()
-        {
-            try
-            {
-                string userEmail = User.Claims.ToList().Find(claim => claim.Type == "Email").Value;
-
-                return await _userService.GetUserByEmail(userEmail);
-            }
-            catch (NotFoundAppException)
-            {
-                return BadRequest(new
-                {
-                    Error = "User not exists"
-                });
-            }
-            catch (Exception exp)
-            {
-                return BadRequest(new
-                {
-                    Error = exp.Message
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
                 });
             }
         }

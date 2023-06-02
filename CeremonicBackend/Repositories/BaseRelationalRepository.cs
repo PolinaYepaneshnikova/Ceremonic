@@ -10,9 +10,11 @@ namespace CeremonicBackend.Repositories
     public class BaseRelationalRepository<Entity, IdType> : IBaseRepository<Entity, IdType> where Entity : BaseEntity<IdType>
     {
         protected CeremonicRelationalDbContext _db;
-        public BaseRelationalRepository(CeremonicRelationalDbContext db)
+        protected IUnitOfWork _UoW;
+        public BaseRelationalRepository(CeremonicRelationalDbContext db, IUnitOfWork uow)
         {
             _db = db;
+            _UoW = uow;
         }
 
         public async Task<Entity> GetById(IdType id)

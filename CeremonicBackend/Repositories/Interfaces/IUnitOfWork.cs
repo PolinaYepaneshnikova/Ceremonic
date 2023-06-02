@@ -1,10 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+
+using System.Threading.Tasks;
 
 namespace CeremonicBackend.Repositories.Interfaces
 {
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
+        IAgreementRepository AgreementRepository { get; }
+
+        IServiceRepository ServiceRepository { get; }
+
+        IWeddingRepository WeddingRepository { get; }
+        IProviderRepository ProviderRepository { get; }
+        IMessagingRepository MessagingRepository { get; }
+
+        IFileRepository FileRepository { get; }
+        void SetProperties(ControllerBase controller, IWebHostEnvironment env);
 
         Task<int> SaveChanges();
     }
