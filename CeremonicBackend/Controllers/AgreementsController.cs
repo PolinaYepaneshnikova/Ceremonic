@@ -44,20 +44,37 @@ namespace CeremonicBackend.Controllers
         [Route("send")]
         public async Task<IActionResult> Send([FromBody] SendAgreementApiModel agreement)
         {
-            string providerEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
-            string destinationEmail = await _userService.GetEmailById(agreement.ClientId);
+            try
+            {
+                string providerEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+                string destinationEmail = await _userService.GetEmailById(agreement.ClientId);
 
-            await _agreementService.Create(providerEmail, agreement);
+                await _agreementService.Create(providerEmail, agreement);
 
-            IEnumerable<MessagingCardApiModel> messagingCards;
+                IEnumerable<MessagingCardApiModel> messagingCards;
 
-            messagingCards = await _messagingService.GetMessagingCards(providerEmail);
-            await _messengerContext.Clients.User(providerEmail).SendAsync("MessagingsIsUpdated", messagingCards);
+                messagingCards = await _messagingService.GetMessagingCards(providerEmail);
+                await _messengerContext.Clients.User(providerEmail).SendAsync("MessagingsIsUpdated", messagingCards);
 
-            messagingCards = await _messagingService.GetMessagingCards(destinationEmail);
-            await _messengerContext.Clients.User(destinationEmail).SendAsync("MessagingsIsUpdated", messagingCards);
+                messagingCards = await _messagingService.GetMessagingCards(destinationEmail);
+                await _messengerContext.Clients.User(destinationEmail).SendAsync("MessagingsIsUpdated", messagingCards);
 
-            return Ok();
+                return Ok();
+            }
+            catch (AccessDeniedAppException)
+            {
+                return new ObjectResult("You can not send agrement, because you are not provider")
+                {
+                    StatusCode = 403
+                };
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
         }
 
         [Authorize]
@@ -76,10 +93,10 @@ namespace CeremonicBackend.Controllers
         [Route("confirm/{id}")]
         public async Task<ActionResult<AgreementApiModel>> Confirm([FromRoute] int id)
         {
-            string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
-
             try
             {
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+
                 AgreementApiModel agreement = await _agreementService.Confirm(userEmail, id);
 
                 return agreement;
@@ -105,10 +122,10 @@ namespace CeremonicBackend.Controllers
         [Route("cancel/{id}")]
         public async Task<ActionResult<AgreementApiModel>> Cancel([FromRoute] int id)
         {
-            string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
-
             try
             {
+                string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
+
                 AgreementApiModel agreement = await _agreementService.Cancel(userEmail, id);
 
                 return agreement;

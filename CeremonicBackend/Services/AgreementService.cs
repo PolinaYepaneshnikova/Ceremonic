@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CeremonicBackend.DB.Mongo;
@@ -14,15 +15,22 @@ namespace CeremonicBackend.Services
     public class AgreementService : IAgreementService
     {
         protected IUnitOfWork _UoW { get; set; }
+        protected IUserService _userService { get; set; }
         protected IMessagingService _messagingService { get; set; }
-        public AgreementService(IUnitOfWork uow, IMessagingService messagingService)
+        public AgreementService(IUnitOfWork uow, IUserService userService, IMessagingService messagingService)
         {
             _UoW = uow;
+            _userService = userService;
             _messagingService = messagingService;
         }
 
         public async Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement)
         {
+            if (await _userService.GetRoleByEmail(providerEmail) == "User")
+            {
+                throw new AccessDeniedAppException($"simple user can not send agreement");
+            }
+
             AgreementEntity agreementEntity = await agreement.ToAgreementEntity(providerEmail, _UoW.UserRepository);
             agreementEntity = await _UoW.AgreementRepository.Add(agreementEntity);
             await _UoW.SaveChanges();
@@ -99,6 +107,11 @@ namespace CeremonicBackend.Services
             await _UoW.SaveChanges();
 
             return agreement.ToAgreementApiModel();
+        }
+
+        public async Task<List<ProviderApiModel>> MyProviders(string userEmail)
+        {
+            throw new Exception();
         }
     }
 }
