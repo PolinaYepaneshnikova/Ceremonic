@@ -63,6 +63,7 @@ namespace CeremonicBackend.Services
 
             agreement.ConfirmStatus = ConfirmStatus.Yes;
             await _UoW.AgreementRepository.Update(agreement);
+            await _UoW.SaveChanges();
 
             return agreement.ToAgreementApiModel();
         }
@@ -78,6 +79,7 @@ namespace CeremonicBackend.Services
 
             agreement.ConfirmStatus = ConfirmStatus.No;
             await _UoW.AgreementRepository.Update(agreement);
+            await _UoW.SaveChanges();
 
             return agreement.ToAgreementApiModel();
         }

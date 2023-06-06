@@ -81,7 +81,7 @@ namespace CeremonicBackend.Controllers
         [Route("cancel/{id}")]
         public async Task<ActionResult<AgreementApiModel>> Cancel([FromRoute] int id)
         {
-            AgreementApiModel agreement = await _agreementService.Confirm(id);
+            AgreementApiModel agreement = await _agreementService.Cancel(id);
 
             return agreement;
         }
