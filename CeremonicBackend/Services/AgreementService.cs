@@ -52,7 +52,7 @@ namespace CeremonicBackend.Services
             return agreement.ToAgreementApiModel();
         }
 
-        public async Task<AgreementApiModel> Confirm(int id)
+        public async Task<AgreementApiModel> Confirm(string userEmail, int id)
         {
             AgreementEntity agreement = await _UoW.AgreementRepository.GetById(id);
 
@@ -61,20 +61,37 @@ namespace CeremonicBackend.Services
                 throw new NotFoundAppException($"agreement not found");
             }
 
-            agreement.ConfirmStatus = ConfirmStatus.Yes;
-            await _UoW.AgreementRepository.Update(agreement);
-            await _UoW.SaveChanges();
+            int userId = (await _UoW.UserRepository.GetByEmail(userEmail)).Id;
+
+            if (agreement.ClientId != userId)
+            {
+                throw new AccessDeniedAppException($"user does not have access to this agreement");
+            }
+
+            if (agreement.ConfirmStatus == ConfirmStatus.NoInfo)
+            {
+                agreement.ConfirmStatus = ConfirmStatus.Yes;
+                await _UoW.AgreementRepository.Update(agreement);
+                await _UoW.SaveChanges();
+            }
 
             return agreement.ToAgreementApiModel();
         }
 
-        public async Task<AgreementApiModel> Cancel(int id)
+        public async Task<AgreementApiModel> Cancel(string userEmail, int id)
         {
             AgreementEntity agreement = await _UoW.AgreementRepository.GetById(id);
 
             if (agreement is null)
             {
                 throw new NotFoundAppException($"agreement not found");
+            }
+
+            int userId = (await _UoW.UserRepository.GetByEmail(userEmail)).Id;
+
+            if (agreement.ClientId != userId && agreement.ProviderId != userId)
+            {
+                throw new AccessDeniedAppException($"user does not have access to this agreement");
             }
 
             agreement.ConfirmStatus = ConfirmStatus.No;

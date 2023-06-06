@@ -9,7 +9,7 @@ namespace CeremonicBackend.Services.Interfaces
     {
         public Task<AgreementApiModel> Create(string providerEmail, SendAgreementApiModel agreement);
         public Task<AgreementApiModel> Get(int id);
-        public Task<AgreementApiModel> Confirm(int id);
-        public Task<AgreementApiModel> Cancel(int id);
+        public Task<AgreementApiModel> Confirm(string userEmail, int id);
+        public Task<AgreementApiModel> Cancel(string userEmail, int id);
     }
 }

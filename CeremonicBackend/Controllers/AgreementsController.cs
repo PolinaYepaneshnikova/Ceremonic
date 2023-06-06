@@ -11,6 +11,8 @@ using System.Security.Claims;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.WebApiModels;
 using CeremonicBackend.SignalRHubs;
+using Microsoft.AspNetCore.Authorization;
+using CeremonicBackend.Exceptions;
 
 namespace CeremonicBackend.Controllers
 {
@@ -37,6 +39,7 @@ namespace CeremonicBackend.Controllers
 
 
 
+        [Authorize]
         [HttpPost]
         [Route("send")]
         public async Task<IActionResult> Send([FromBody] SendAgreementApiModel agreement)
@@ -57,6 +60,7 @@ namespace CeremonicBackend.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<AgreementApiModel>> Get([FromRoute] int id)
@@ -67,13 +71,33 @@ namespace CeremonicBackend.Controllers
         }
 
 
+        [Authorize]
         [HttpPut]
         [Route("confirm/{id}")]
         public async Task<ActionResult<AgreementApiModel>> Confirm([FromRoute] int id)
         {
-            AgreementApiModel agreement = await _agreementService.Confirm(id);
+            string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
 
-            return agreement;
+            try
+            {
+                AgreementApiModel agreement = await _agreementService.Confirm(userEmail, id);
+
+                return agreement;
+            }
+            catch (AccessDeniedAppException)
+            {
+                return new ObjectResult("You not have access to this agreement")
+                {
+                    StatusCode = 403
+                };
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
         }
 
 
@@ -81,9 +105,28 @@ namespace CeremonicBackend.Controllers
         [Route("cancel/{id}")]
         public async Task<ActionResult<AgreementApiModel>> Cancel([FromRoute] int id)
         {
-            AgreementApiModel agreement = await _agreementService.Cancel(id);
+            string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
 
-            return agreement;
+            try
+            {
+                AgreementApiModel agreement = await _agreementService.Cancel(userEmail, id);
+
+                return agreement;
+            }
+            catch (AccessDeniedAppException)
+            {
+                return new ObjectResult("You not have access to this agreement")
+                {
+                    StatusCode = 403
+                };
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(new
+                {
+                    Error = exp.GetType().Name + ": " + exp.Message + "\n" + exp.StackTrace
+                });
+            }
         }
     }
 }
