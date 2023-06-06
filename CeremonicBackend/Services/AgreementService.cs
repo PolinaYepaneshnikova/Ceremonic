@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using CeremonicBackend.DB.Mongo;
@@ -111,7 +112,24 @@ namespace CeremonicBackend.Services
 
         public async Task<List<ProviderApiModel>> MyProviders(string userEmail)
         {
-            throw new Exception();
+            if (await _userService.GetRoleByEmail(userEmail) != "User")
+            {
+                throw new AccessDeniedAppException($"provider can not get his ptoviders");
+            }
+
+            int userId = (await _UoW.UserRepository.GetByEmail(userEmail)).Id;
+
+            var agreements = await _UoW.AgreementRepository.GetByClientId(userId);
+
+            var providers = agreements
+                .Select(a => _UoW.ProviderRepository.GetById(a.ProviderId))
+                .Select(t => t.Result);
+
+            var providersApiModels = providers
+                .Select(p => p.ToProviderApiModel(_UoW.ServiceRepository))
+                .Select(t => t.Result);
+
+            return providersApiModels.ToList();
         }
     }
 }
