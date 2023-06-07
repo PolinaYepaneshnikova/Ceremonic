@@ -99,10 +99,12 @@ namespace CeremonicBackend.Controllers
             string userEmail = User.Claims.ToList().Find(claim => claim.Type == ClaimTypes.Email).Value;
             string companionEmail = await _userService.GetEmailById(companionId);
 
+            int userId = (await _userService.Get(userEmail)).Id;
+
             await _messagingService.MessagesIsViewed(userEmail, companionId, messageIDs);
 
-            await _messengerContext.Clients.User(userEmail).SendAsync("MessagesIsViewed", companionEmail, messageIDs);
-            await _messengerContext.Clients.User(companionEmail).SendAsync("MessagesIsViewed", userEmail, messageIDs);
+            await _messengerContext.Clients.User(userEmail).SendAsync("MessagesIsViewed", companionId, messageIDs);
+            await _messengerContext.Clients.User(companionEmail).SendAsync("MessagesIsViewed", userId, messageIDs);
 
             return Ok();
         }

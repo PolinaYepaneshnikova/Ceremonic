@@ -18,6 +18,7 @@ namespace CeremonicBackend.Mappings
         {
             var messagingCard = new MessagingCardApiModel()
             {
+                UserId = CompanionId,
                 UserName = await messagingRepository.GetContactNameById(CompanionId),
                 CountOfNotViewedMessages = entity.MessagesList.Sum(m => (m.NotViewed ?? false) ? 1 : 0)
             };
