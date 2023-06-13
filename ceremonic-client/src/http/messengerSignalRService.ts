@@ -87,8 +87,8 @@ export class MessengerSignalRService {
 
         if (this.messaging.user2Id && !currentCard) {
             this.messagingCards.unshift({
-              userId: currentCard!.userId,
-              userName: currentCard!.userName,
+              userId: this.messaging!.user2Id,
+              userName: "compainer",
               countOfNotViewedMessages: 0
             });
         }

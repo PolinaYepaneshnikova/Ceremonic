@@ -21,7 +21,7 @@ const MessengerPage: React.FC = () => {
         messengerSignalRService.getMessaging(messaging.user2Id).then((messagingData) => {
           setMessaging(messagingData);
         });
-      }, [messaging.user1Id]); // Добавление messaging.user1Id в список зависимостей, чтобы обновить эффект при изменении значения
+      }, [messaging, messagingCards]); // Добавление messaging.user1Id в список зависимостей, чтобы обновить эффект при изменении значения
       
   return (
     <div>
