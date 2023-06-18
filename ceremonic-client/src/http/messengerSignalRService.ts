@@ -1,213 +1,184 @@
-import * as signalR from '@aspnet/signalr';
-import { $authHost } from './index';
+import * as signalR from "@aspnet/signalr";
+import { $authHost } from "./index";
+import EventEmitter from "events";
 
 export type MessagingCardApiModel = {
-    userId: number;
-    userName: string;
-    countOfNotViewedMessages: number;
+  userId: number;
+  userName: string;
+  countOfNotViewedMessages: number;
 };
-  
+
 export type MessageApiModel = {
-    id: number;
-    authorId: number;
-    text: string;
-    imageFileName: string;
-    fileName: string;
-    postedAt: Date;
-    notViewed: boolean;
+  id: number;
+  authorId: number;
+  text: string;
+  imageFileName: string;
+  fileName: string;
+  postedAt: Date;
+  notViewed: boolean;
 };
-  
+
 export type MessagingApiModel = {
-    user1Id: number;
-    user2Id: number;
-    messagesList: MessageApiModel[];
+  user1Id: number;
+  user2Id: number;
+  messagesList: MessageApiModel[];
 };
+
+export enum SignalServiceEvent {
+  MessagingsIsUpdated = "messagingsIsUpdated",
+  MessagesIsViewed = "messagesIsViewed",
+}
 
 export class MessengerSignalRService {
-  private hubConnection?: signalR.HubConnection;
-  messagingCards: MessagingCardApiModel[] = [];
-  messaging: MessagingApiModel = {
-    user1Id: 0,
-    user2Id: 0,
-    messagesList: [],
+  private connection?: signalR.HubConnection;
+
+  public events = new EventEmitter();
+
+  public getMessaging = async (
+    companionId: number
+  ): Promise<MessagingApiModel> => {
+    const response = await $authHost.get(
+      `/api/Messenger/messaging/${companionId}`
+    );
+
+    const messaging: MessagingApiModel = response.data;
+
+    const viewedMessageIDs: number[] = messaging.messagesList
+      .filter((item) => item.notViewed && item.authorId === Number(companionId))
+
+      .map((item) => item.id);
+
+    // viewedMessageIDs.forEach(() => {
+    //   messaging.messagesList.forEach((item )  => [
+    //     if (ChatItem)
+    //   ])
+    // })
+
+    if (viewedMessageIDs.length > 0) {
+      this.messagesIsViewed(messaging.user2Id, viewedMessageIDs);
+    }
+
+    return messaging;
   };
 
-  startConnection = () => {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(import.meta.env.VITE_SERVER_ENDPOINT + '/hubs/MessengerHub', {
+  public getMessagingCards = async (): Promise<MessagingCardApiModel[]> => {
+    const response = await $authHost.get("/api/Messenger/messagingCards");
+
+    const cards = response.data;
+
+    // let currentCard: MessagingCardApiModel | undefined = cards.find(
+    //   (card) => card.userId == this.messaging.user2Id
+    // );
+
+    // if (this.messaging.user2Id && !currentCard) {
+    //   cards.unshift({
+    //     userId: this.messaging!.user2Id,
+    //     userName: "compainer",
+    //     countOfNotViewedMessages: 0,
+    //   });
+    // }
+
+    return cards;
+  };
+
+  public sendMessage = (message: FormData): Promise<any> => {
+    return $authHost
+      .post("/api/Messenger/sendMessage", message)
+      .catch((error) => {
+        console.error("Error sending message:", error);
+      });
+  };
+
+  public messagesIsViewed = (
+    companionId: number,
+    messageIds: number[]
+  ): Promise<any> => {
+    return $authHost
+      .put(`/api/Messenger/messagesIsViewed/${companionId}`, messageIds)
+
+      .catch((error) => {
+        console.error("Error marking messages as viewed: ", error);
+      });
+  };
+
+  public startConnection = async () => {
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl(import.meta.env.VITE_SERVER_ENDPOINT + "/hubs/MessengerHub", {
         skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets,
-        accessTokenFactory: () => localStorage.getItem('jwtString')!,
+
+        transport: signalR.HttpTransportType.LongPolling,
+
+        accessTokenFactory: () => localStorage.getItem("jwtString")!,
       })
+
       .build();
 
-    this.hubConnection
-      .start()
-      .then(() => {
-        console.log('Hub Connection Started!');
-      })
-      .then(() => {
-        this.resetData();
-      })
-      .then(() => {
-        this.messagingsIsUpdatedSetListener();
-        this.messagesIsViewedSetListener();
-      })
-      .then(() => {
-        this.getMessagingCards();
-      })
-      .catch(err => console.log('Error while starting connection: ' + err));
+    try {
+      await this.connection.start();
+
+      this.subscribe();
+    } catch (error) {
+      console.log("Error while starting connection: " + error);
+    }
   };
+
+  public subscribe() {
+    this.connection?.on(
+      SignalServiceEvent.MessagingsIsUpdated,
+
+      (cards: MessagingCardApiModel[]) => {
+        return this.events.emit(SignalServiceEvent.MessagingsIsUpdated, {
+          cards,
+        });
+      }
+    );
+
+    this.connection?.on(
+      SignalServiceEvent.MessagesIsViewed,
+
+      (companionId: number, viewedMessageIDs: number[]) => {
+        return this.events.emit(SignalServiceEvent.MessagesIsViewed, {
+          companionId,
+          viewedMessageIDs,
+        });
+      }
+    );
+  }
 
   abortConnection = () => {
-    this.hubConnection?.stop()
-      .then(() => {
-        console.log('Hub Connection Stoped!');
-      });
+    this.connection?.stop().then(() => {
+      console.log("Hub Connection Stoped!");
+    });
   };
 
-  resetData = () => {
-    this.messaging = {
-      user1Id: 0,
-      user2Id: 0,
-      messagesList: [],
-    };
-    this.messagingCards = [];
-  };
+  // getNewMessages = (companionId: number): Promise<MessagingApiModel> => {
+  //   return $authHost
+  //     .get(`/api/Messenger/newMessages/${companionId}`)
+  //     .then((response) => {
+  //       const newMessages: MessageApiModel[] = response.data;
 
-  getMessagingCards = (): Promise<MessagingCardApiModel[]> => {
-    return $authHost
-      .get('/api/Messenger/messagingCards')
-      .then((response) => {
-        this.messagingCards = response.data; 
-        
-        let currentCard: MessagingCardApiModel | undefined = this.messagingCards.find(
-            card => card.userId == this.messaging.user2Id
-        );
+  //       let viewedMessageIDs: number[] = [];
+  //       for (let mes of newMessages) {
+  //         if (mes.id >= this.messaging.messagesList.length) {
+  //           this.messaging.messagesList.push(mes);
+  //         }
+  //         if (mes.authorId == this.messaging.user2Id && mes.notViewed) {
+  //           viewedMessageIDs.push(mes.id);
+  //         }
+  //       }
 
-        if (this.messaging.user2Id && !currentCard) {
-            this.messagingCards.unshift({
-              userId: this.messaging!.user2Id,
-              userName: "compainer",
-              countOfNotViewedMessages: 0
-            });
-        }
+  //       if (viewedMessageIDs.length > 0) {
+  //         this.messagesIsViewed(this.messaging.user2Id, viewedMessageIDs);
+  //       }
 
-        return this.messagingCards;
-      })
-      .catch((error) => {
-        console.error('Error getting messaging cards:', error);
+  //       return this.messaging;
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error getting new messages:', error);
 
-        return this.messagingCards;
-      });
-  };
-
-  getMessaging = (companionId: number): Promise<MessagingApiModel> => {
-    return $authHost
-      .get(`/api/Messenger/messaging/${companionId}`)
-      .then((response) => {
-        this.messaging = response.data;
-        
-        let viewedMessageIDs: number[] = [];
-        for (let mes of this.messaging.messagesList) {
-          if (mes.id >= this.messaging.messagesList.length) {
-            this.messaging.messagesList.push(mes);
-          }
-          if (mes.authorId == this.messaging.user2Id && mes.notViewed) {
-            viewedMessageIDs.push(mes.id);
-          }
-        }
-
-        if (viewedMessageIDs.length > 0) {
-          this.messagesIsViewed(this.messaging.user2Id, viewedMessageIDs);
-        }
-
-        return this.messaging;
-      })
-      .catch((error) => {
-        console.error('Error getting messaging:', error);
-
-        return this.messaging;
-      });
-  };
-
-  sendMessage = (message: FormData): Promise<any> => {
-    return $authHost
-      .post('/api/Messenger/sendMessage', message)
-      .catch((error) => {
-        console.error('Error sending message:', error);
-      });
-  };
-
-  messagingsIsUpdatedSetListener = () => {
-    if (this.hubConnection) {
-      this.hubConnection.on('messagingsIsUpdated', (messagingCards: MessagingCardApiModel[]) => {
-        this.messagingCards = messagingCards;
-        
-        if (this.messagingCards.find(
-            card => card.countOfNotViewedMessages > 0 && card.userId == this.messaging.user2Id
-        )) {
-            this.getNewMessages(this.messaging.user2Id);
-         }
-      });
-    }
-  };
-
-  getNewMessages = (companionId: number): Promise<MessagingApiModel> => {
-    return $authHost
-      .get(`/api/Messenger/newMessages/${companionId}`)
-      .then((response) => {
-        const newMessages: MessageApiModel[] = response.data;
-        
-        let viewedMessageIDs: number[] = [];
-        for (let mes of newMessages) {
-          if (mes.id >= this.messaging.messagesList.length) {
-            this.messaging.messagesList.push(mes);
-          }
-          if (mes.authorId == this.messaging.user2Id && mes.notViewed) {
-            viewedMessageIDs.push(mes.id);
-          }
-        }
-
-        if (viewedMessageIDs.length > 0) {
-          this.messagesIsViewed(this.messaging.user2Id, viewedMessageIDs);
-        }
-
-        return this.messaging;
-      })
-      .catch((error) => {
-        console.error('Error getting new messages:', error);
-
-        return this.messaging;
-      });
-  };
-
-  messagesIsViewed = (companionId: number, messageIds: number[]): Promise<any> => {
-    return $authHost
-      .post(`/api/Messenger/messagesIsViewed/${companionId}`, messageIds)
-      .catch((error) => {
-        console.error('Error marking messages as viewed:', error);
-      });
-  };
-
-  messagesIsViewedSetListener = () => {
-    if (this.hubConnection) {
-      this.hubConnection.on('messagesIsViewed', (companionId: number, viewedMessageIDs: number[]) => {
-        let card: MessagingCardApiModel | undefined
-          = this.messagingCards.find(card => card.userId == companionId);
-
-        if (card) {
-          card.countOfNotViewedMessages = 0;
-        }
-
-        if (companionId == this.messaging.user2Id) {
-          for (let id of viewedMessageIDs) {
-            this.messaging.messagesList[id].notViewed = false;
-          }
-        }
-      });
-    }
-  };
+  //       return this.messaging;
+  //     });
+  // };
 }
 
 export default MessengerSignalRService;
