@@ -44,6 +44,11 @@ namespace CeremonicBackend.Controllers
             => await _fileRepository.GetByName("Images", fileName);
 
         [HttpGet]
+        [Route("avatar/{fileName}")]
+        public async Task<ActionResult> Avatar(string fileName)
+            => await _fileRepository.GetByName("Avatars", fileName);
+
+        [HttpGet]
         [Route("avatar/{userId}")]
         public async Task<ActionResult> Avatar(int userId)
         {
