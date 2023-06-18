@@ -49,7 +49,7 @@ namespace CeremonicBackend.Controllers
             => await _fileRepository.GetByName("Avatars", fileName);
 
         [HttpGet]
-        [Route("avatar/{userId}")]
+        [Route("avatarById/{userId}")]
         public async Task<ActionResult> Avatar(int userId)
         {
             string email = await _userService.GetEmailById(userId);
