@@ -18,6 +18,7 @@ using CeremonicBackend.Repositories.Interfaces;
 using CeremonicBackend.Repositories;
 using CeremonicBackend.Services.Interfaces;
 using CeremonicBackend.Services;
+using CeremonicBackend.SignalRHubs;
 
 namespace CeremonicBackend
 {
@@ -175,6 +176,8 @@ namespace CeremonicBackend
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<MessengerHub>("/hubs/MessengerHub");
+
                 endpoints.MapControllers();
             });
         }
