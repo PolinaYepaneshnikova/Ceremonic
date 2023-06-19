@@ -6,13 +6,15 @@ import Footer from './components/Footer'
 import AppRouter from './components/AppRouter'
 import { currentDataProvider } from './http/userAPI'
 import { useAppDispatch } from './hook'
-import { updateIsProvider } from './store/userSlice'
+import { updateIsProvider, updateIsUser } from './store/userSlice'
+import { currentDataWedding } from './http/weddingAPI'
 
 
 function App() {
 
   const dispatch = useAppDispatch()
   const [avatarProvider, setAvatarProvider] = useState<string>('')
+  const [avatarUser, setAvatarUser] = useState<string>('')
 
   useEffect(() => {
     const token = localStorage.getItem('jwtString')
@@ -24,6 +26,11 @@ function App() {
           currentDataProvider().then((currentDataProviderResponse) => {
             setAvatarProvider(currentDataProviderResponse.avatarFileName)
           })
+        }else{
+          dispatch(updateIsUser(true))
+          currentDataWedding().then((currentDataWeddingResponse) => {
+            setAvatarUser(currentDataWeddingResponse.avatar1FileName)
+          })
         } 
       } catch (error) {
         console.log(error)
@@ -34,7 +41,7 @@ function App() {
 
   return (
     <div className='App'>
-      <Header avatarProvider={avatarProvider} />
+      <Header avatarProvider={avatarProvider} avatarUser={avatarUser}/>
       <AppRouter />
       <Footer />
     </div>  

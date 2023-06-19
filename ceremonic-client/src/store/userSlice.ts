@@ -3,10 +3,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type ProviderState = {
     isProvider: boolean,
-  }
+}
 
-  const initialState: ProviderState = {
+type UserState = {
+  isUser: boolean,
+  date: string,
+}
+
+  const initialState: ProviderState & UserState = {
     isProvider: false,
+    isUser: false,
+    date: '18.06.2023',
+
   }
   
 
@@ -18,9 +26,17 @@ const userSlice = createSlice({
             state.isProvider = action.payload
 
         },
+        updateIsUser(state, action: PayloadAction<boolean>) {
+          state.isUser = action.payload
+
+        },
+        updateDateUser(state, action: PayloadAction<string>) {
+          state.date = action.payload
+
+        },
     },
 });
 
-export const {updateIsProvider} = userSlice.actions;
+export const {updateIsProvider, updateIsUser, updateDateUser} = userSlice.actions;
 
 export default userSlice.reducer;

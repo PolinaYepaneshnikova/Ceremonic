@@ -4,16 +4,58 @@ import styles from './css/myWeddingSurvey.module.css'
 import GEO from '../assets/image/Page_iAmVendor/GEO.svg'
 import { useState } from 'react';
 import Button from '../components/Button';
+import { MY_WEDDING_ROUTE } from '../utils/constRoutes';
+import { useNavigate } from 'react-router-dom';
+import { weddingEdit } from '../http/weddingAPI';
+import { useAppSelector } from '../hook';
 
 const MyWeddingSurvey: React.FC = () => {
 
+    const navigate = useNavigate()
     const [selectedGuestCount, setSelectedGuestCount] = useState<string>('')
+    const [selectedCost, setSelectedCost] = useState<string>('')
 
+    const you: boolean = true
+
+    const [fullName1, setFullName1] = useState<string>('')
+    const [fullName2, setFullName2] = useState<string>('')
+
+    let date = useAppSelector(state => state.userInfo.date)
+
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const handleGuestCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedGuestCount(event.target.value)
         const [min, max] = event.target.value.split(" ") 
     }
+
+    const handleCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedCost(event.target.value)
+        const cost = event.target.value
+    }
+
+    const click = async () => {
+        try {
+            const formData = new FormData()
+            formData.append("FullName1", fullName1);
+            formData.append("FullName2", fullName2);
+            formData.append("Date", date);
+            formData.append("Geolocation", '');
+            formData.append("City", '');
+            formData.append("GuestCountRange.Min", '0');
+            formData.append("GuestCountRange.Max", '0');
+            formData.append("ApproximateBudget.Min", '0');
+            formData.append("ApproximateBudget.Max", '0');
+        
+            weddingEdit(formData).then(data => {
+                navigate(MY_WEDDING_ROUTE, {replace: true})
+            })
+                  
+        } catch (e: any) {
+            alert(e.response.data.message)
+        }
+    }
+
 
   return (
     <div className={styles.myWeddingSurvey}>
@@ -25,13 +67,13 @@ const MyWeddingSurvey: React.FC = () => {
                     <p>
                         Як вас звати?
                     </p>
-                    <input className={styles.input} type="text" placeholder='Ввести ім’я'/>
+                    <input className={styles.input} type="text" placeholder='Ввести ім’я' onChange={e => setFullName1(e.target.value)}/>
                 </div>
 
                 <p>
                     Завантажте вашу фотографію
                 </p>
-                <UploadImageUser />
+                <UploadImageUser you={you}/>
             </div>
 
             <div className={styles.right}>
@@ -39,7 +81,7 @@ const MyWeddingSurvey: React.FC = () => {
                     <p>
                         Як звати вашого партнера?
                     </p>
-                    <input className={styles.input} type="text" placeholder='Ввести ім’я'/>
+                    <input className={styles.input} type="text" placeholder='Ввести ім’я' onChange={e => setFullName2(e.target.value)}/>
                 </div>
 
                 <p>
@@ -88,17 +130,17 @@ const MyWeddingSurvey: React.FC = () => {
                 <div className={styles.right_cost}>
                     <div style={{marginBottom: '38px'}} className={styles.label_before_min}>
                         <input className={styles.right_cost_radio_input} type="radio" name="cost" id="cost_1"
-                        value="0 19" checked={selectedGuestCount === '0 19'} onChange={handleGuestCountChange} />
+                        value="200000 " checked={selectedCost === '200000 '} onChange={handleCostChange} />
                         <label htmlFor="cost_1" >Мінімальний <span className={styles.cost}>$$</span></label>
                     </div>
                     <div style={{marginBottom: '38px'}} className={styles.label_before_med}>
                         <input className={styles.right_cost_radio_input} type="radio" name="cost" id="cost_2"
-                        value="20 50" checked={selectedGuestCount === '20 50'} onChange={handleGuestCountChange} />
+                        value="300000" checked={selectedCost === '300000'} onChange={handleCostChange} />
                         <label htmlFor="cost_2" >Оптимальний <span className={styles.cost}>$$$</span></label>
                     </div>
                     <div style={{marginBottom: '38px'}} className={styles.label_before_max}>
                         <input className={styles.right_cost_radio_input} type="radio" name="cost" id="cost_3"
-                        value="51 100" checked={selectedGuestCount === '51 100'} onChange={handleGuestCountChange} />
+                        value="400000" checked={selectedCost === '400000'} onChange={handleCostChange} />
                         <label htmlFor="cost_3" >Без значних обмежень <span className={styles.cost}>$$$$</span></label>
                     </div>
                 </div>
@@ -146,7 +188,7 @@ const MyWeddingSurvey: React.FC = () => {
         </div>
 
         <Button kind='button_with-background-radius' borderRadius='4px' fontSize='14px' fontWeight={500}
-        width='417px' height='40px'>Зберегти</Button>
+        width='417px' height='40px' onClick={click}>Зберегти</Button>
         <p style={{fontWeight: 300, fontSize: '12px'}}>
             Не хвилюйтесь, у вас буде можливість змінити свій вибір.
         </p>

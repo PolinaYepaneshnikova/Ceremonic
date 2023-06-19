@@ -59,7 +59,6 @@ export const providerRegistration = async (
     localStorage.setItem('jwtString', data.jwtString)
     return jwt_decode(data.jwtString)
 }
-
 export const providerGoogleRegistration = async (
     firstName: string, 
     lastName: string, 
@@ -72,7 +71,6 @@ export const providerGoogleRegistration = async (
     localStorage.setItem('jwtString', data.jwtString)
     return jwt_decode(data.jwtString)
 }
-
 export const providerAvatar = async (formData: FormData) => {
     const {data} = await $authHost.put('/api/ProviderAccount/editAvatar', formData, {
         headers: {
@@ -81,7 +79,6 @@ export const providerAvatar = async (formData: FormData) => {
     })
     return data
 }
-
 export const providerDataAvatar = async (formData: FormData) => {
     const response = await $authHost.put('/api/ProviderAccount/edit', formData, {
         headers: {
@@ -101,18 +98,15 @@ export const fetchAvatarFile = async (fileName: string) => {
     return data
 }
 
+export const providerAll = async (
+    keywords: string, 
+    serviceNames: string[], 
+    date: string, 
+    city: string, 
+    numberOfPriceCategory: number,
+    orderBy: string, 
+    numberOfGuestCountCategory: number) => {
+    const {data} = await $host.get('/api/Providers/search')
 
-// export const updateUsers = async (username, email, role, id) => {
-//     const {data} = await $authHost.put('api/user',{username, email, role, id})
-//     return data
-// }
-
-// export const deleteUsers = async (id) => {
-//     const {data} = await $authHost.delete('api/user', { data: {id}})
-//     return data
-// }
-
-// export const createUsers = async (username, email, password, role) => {
-//     const {data} = await $authHost.post('api/user/registration', {username, email, password, role})
-//     return data
-// }
+    return data
+}

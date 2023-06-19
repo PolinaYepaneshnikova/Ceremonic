@@ -14,8 +14,7 @@ function AppRouter() {
         <Route key={path} path={path} element={<Component />} />
       )}
 
-      <Route path="*" element={<Navigate to={INDEX_PAGE_ROUTE} replace />}
-    />
+      <Route path="*" element={<Navigate to={INDEX_PAGE_ROUTE} replace />}/>
     </Routes>
   );
 }

@@ -1,0 +1,26 @@
+.messenger-page-container {
+    padding-bottom: 24px;
+    padding-left: 136px;
+    padding-right: 96px;
+    min-height: 60vh;
+  }
+  
+  .messenger-chat {
+    display: flex;
+  }
+  
+  .messenger-chat-list {
+    width: 33%;
+    max-width: 400px;
+  }
+  
+  .messenger-chat-conversation {
+    width: 66%;
+  }
+  
+  .messenger-chat-messages {
+    min-height: 300px;
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  }

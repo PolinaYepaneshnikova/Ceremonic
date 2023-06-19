@@ -11,8 +11,6 @@ type Ioptions = {
     label: string,
 }[]
 
-
-
 const MySelect: React.FC = () => {
 
     const dispatch = useAppDispatch()
@@ -30,7 +28,7 @@ const MySelect: React.FC = () => {
             dispatch(addProviderServiceName(newValue.value))
         }else{
             setCurrentService('')
-            dispatch(addProviderServiceName(currentService))
+            dispatch(addProviderServiceName(''))
         }
     }
     
