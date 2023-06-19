@@ -81,7 +81,7 @@ namespace CeremonicBackend.Services
 
             await _UoW.SaveChanges();
 
-            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository);
         }
 
         public async Task<ProviderApiModel> Get(int userId)
@@ -93,7 +93,7 @@ namespace CeremonicBackend.Services
                 throw new NotFoundAppException($"provider not found");
             }
 
-            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository);
         }
 
         public async Task<ProviderApiModel> Get(string email)
@@ -105,7 +105,7 @@ namespace CeremonicBackend.Services
                 throw new NotFoundAppException($"provider not found");
             }
 
-            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository);
         }
 
         public async Task<ProviderApiModel> Edit(string email, EditProviderApiModel model)
@@ -154,7 +154,7 @@ namespace CeremonicBackend.Services
             await _UoW.ProviderRepository.Update(provider);
             await _UoW.SaveChanges();
 
-            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository);
         }
 
         public async Task<ProviderApiModel> EditAvatar(string email, IFormFile avatarFile)
@@ -176,13 +176,13 @@ namespace CeremonicBackend.Services
             await _UoW.ProviderRepository.Update(provider);
             await _UoW.SaveChanges();
 
-            return await provider.ToProviderApiModel(_UoW.ServiceRepository);
+            return await provider.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository);
         }
 
         public async Task<List<ProviderApiModel>> Search(SearchProviderApiModel model)
         {
             return (await _UoW.ProviderRepository.Search(model))
-                .Select(async e => await e.ToProviderApiModel(_UoW.ServiceRepository))
+                .Select(async e => await e.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository))
                 .Select(t => t.Result).ToList();
         }
     }

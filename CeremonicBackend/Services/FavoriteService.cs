@@ -33,7 +33,7 @@ namespace CeremonicBackend.Services
             wedding = await wedding.IncludeFavorites(_UoW.ProviderRepository);
 
             return wedding.MyFavorites
-                .Select(async w => await w.ToProviderApiModel(_UoW.ServiceRepository))
+                .Select(async w => await w.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository))
                 .Select(task => task.Result)
                 .ToList();
         }

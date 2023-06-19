@@ -126,7 +126,7 @@ namespace CeremonicBackend.Services
                 .Select(t => t.Result);
 
             var providersApiModels = providers
-                .Select(p => p.ToProviderApiModel(_UoW.ServiceRepository))
+                .Select(p => p.ToProviderApiModel(_UoW.ServiceRepository, _UoW.UserRepository))
                 .Select(t => t.Result);
 
             return providersApiModels.ToList();
